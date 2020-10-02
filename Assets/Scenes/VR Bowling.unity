@@ -2363,7 +2363,7 @@ Transform:
   m_LocalScale: {x: 0.389511, y: 0.389511, z: 0.389511}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1206304233
 MonoBehaviour:
@@ -3281,6 +3281,7 @@ GameObject:
   - component: {fileID: 1892855600}
   - component: {fileID: 1892855602}
   - component: {fileID: 1892855603}
+  - component: {fileID: 1892855604}
   m_Layer: 10
   m_Name: VR Rig
   m_TagString: Untagged
@@ -3384,6 +3385,25 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &1892855604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1892855597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc4f2c0214c9b494fa7eb5b8b2c02885, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_System: {fileID: 0}
+  m_TurnUsage: 0
+  m_Controllers:
+  - {fileID: 124427434}
+  m_TurnAmount: 45
+  m_DebounceTime: 0.2
+  m_DeadZone: 0.75
 --- !u!1001 &1947425004
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4115,7 +4135,7 @@ PrefabInstance:
     - target: {fileID: 7500534274535935757, guid: 1ebfadfb55f7dc24e8ad14535ce3aaea,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7500534274535935757, guid: 1ebfadfb55f7dc24e8ad14535ce3aaea,
         type: 3}
