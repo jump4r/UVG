@@ -19,6 +19,11 @@ public class ContinuousMovement : MonoBehaviour
     private float fallingSpeed = 0;
     private float additionalHeight = 0.2f;
 
+    public float jumpVelocity = 1f;
+    private bool jumpButtonPressed = false;
+    private bool jumpReady = true;
+    private Vector3 verticalVelocity = Vector3.zero;
+
     void Start()
     {
         character = GetComponent<CharacterController>();   
@@ -30,6 +35,7 @@ public class ContinuousMovement : MonoBehaviour
     {
         InputDevice device = InputDevices.GetDeviceAtXRNode(inputSource);
         device.TryGetFeatureValue(CommonUsages.primary2DAxis, out inputAxis);
+        device.TryGetFeatureValue(CommonUsages.primaryButton, out jumpButtonPressed);
     }
 
     private void FixedUpdate()
@@ -44,14 +50,26 @@ public class ContinuousMovement : MonoBehaviour
         if (CheckIfGrounded())
         {
             fallingSpeed = 0;
+            verticalVelocity = Vector3.zero;
+            jumpReady = true;
         }
 
         else
         {
             fallingSpeed += gravity * Time.fixedDeltaTime;
+            jumpReady = false;
         }
 
-        character.Move(Vector3.up * fallingSpeed * Time.fixedDeltaTime);
+        // Jump
+        if (jumpReady && jumpButtonPressed)
+        {
+            Debug.Log("Button Pressed");
+            jumpReady = false;
+            verticalVelocity = Vector3.up * jumpVelocity;
+        }
+
+        verticalVelocity += Vector3.up * fallingSpeed * Time.fixedDeltaTime;
+        character.Move(verticalVelocity);
     }
 
     private void CapsuleFollowHeadset()
@@ -67,5 +85,10 @@ public class ContinuousMovement : MonoBehaviour
         float rayLength = character.center.y + 0.01f;
         bool hasHit = Physics.SphereCast(rayStart, character.radius, Vector3.down, out RaycastHit hitInfo, rayLength, groundLayer);
         return hasHit;
+    }
+
+    private void Jump()
+    {
+        jumpReady = false;
     }
 }
