@@ -35,7 +35,9 @@ public class ContinuousMovement : MonoBehaviour
     {
         InputDevice device = InputDevices.GetDeviceAtXRNode(inputSource);
         device.TryGetFeatureValue(CommonUsages.primary2DAxis, out inputAxis);
-        device.TryGetFeatureValue(CommonUsages.primaryButton, out jumpButtonPressed);
+
+        InputDevice secondaryDevice = InputDevices.GetDeviceAtXRNode(secondaryInputSource);
+        secondaryDevice.TryGetFeatureValue(CommonUsages.primaryButton, out jumpButtonPressed);
     }
 
     private void FixedUpdate()
@@ -63,7 +65,6 @@ public class ContinuousMovement : MonoBehaviour
         // Jump
         if (jumpReady && jumpButtonPressed)
         {
-            Debug.Log("Button Pressed");
             jumpReady = false;
             verticalVelocity = Vector3.up * jumpVelocity;
         }
@@ -85,10 +86,5 @@ public class ContinuousMovement : MonoBehaviour
         float rayLength = character.center.y + 0.01f;
         bool hasHit = Physics.SphereCast(rayStart, character.radius, Vector3.down, out RaycastHit hitInfo, rayLength, groundLayer);
         return hasHit;
-    }
-
-    private void Jump()
-    {
-        jumpReady = false;
     }
 }

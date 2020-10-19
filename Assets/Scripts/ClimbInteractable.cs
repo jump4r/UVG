@@ -8,8 +8,6 @@ public class ClimbInteractable : XRBaseInteractable
     protected override void OnSelectEnter(XRBaseInteractor interactor)
     {
         base.OnSelectEnter(interactor);
-        Debug.Log("Select Enter");
-
         if (interactor is XRDirectInteractor)
         {
             Climber.climbingHand = interactor.GetComponent<XRController>();
@@ -19,7 +17,6 @@ public class ClimbInteractable : XRBaseInteractable
     protected override void OnSelectExit(XRBaseInteractor interactor)
     {
         base.OnSelectExit(interactor);
-        Debug.Log("Select Exit");
         if (interactor is XRDirectInteractor)
         {
             if (Climber.climbingHand && Climber.climbingHand.name == interactor.name)
