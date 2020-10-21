@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ball
   - Hand
+  - Pass
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Grab
   - Ground
   - Body
-  - 
+  - Pass
   - 
   - 
   - 

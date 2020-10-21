@@ -16,6 +16,6 @@ public class BallLauncher : MonoBehaviour
         Rigidbody rb = instance.GetComponent<Rigidbody>();
         Ball volleyball = instance.GetComponent<Ball>();
         rb.velocity = transform.rotation * Vector3.forward * 10f;
-        volleyball.hitMultiplier = 4f;
+        volleyball.hitMultiplier = 10f;
     }
 }

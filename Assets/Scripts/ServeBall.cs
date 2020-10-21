@@ -6,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class ServeBall : XRGrabInteractable
 {
-    public XRNode inputSource;
+    private XRController controller;
     private Vector3 handVelocity;
     private bool serveReady = false;
     private Rigidbody rb;
@@ -20,33 +20,35 @@ public class ServeBall : XRGrabInteractable
         rb = GetComponent<Rigidbody>();   
     }
 
-    void Update()
-    {
-        if (serveReady)
-        {
-            InputDevice device = InputDevices.GetDeviceAtXRNode(inputSource);
-            device.TryGetFeatureValue(CommonUsages.deviceVelocity, out handVelocity);
-        }
-    }
-
     protected override void OnSelectEnter(XRBaseInteractor interactor)
     {
-
+        base.OnSelectEnter(interactor);
+        if (interactor is XRDirectInteractor)
+        {
+            Debug.Log("Grab");
+            controller = interactor.GetComponent<XRController>();
+        }
     }
 
     protected override void OnSelectExit(XRBaseInteractor interactor)
     {
-        
+        base.OnSelectExit(interactor);
+        if (interactor is XRDirectInteractor)
+        {
+            if (controller)
+            {
+                StartCoroutine(TossBall());
+            }
+        }
     }
 
-    public void GrabBall()
+    IEnumerator TossBall()
     {
-        serveReady = true;
-    }
+        InputDevices.GetDeviceAtXRNode(controller.controllerNode).TryGetFeatureValue(CommonUsages.deviceVelocity, out handVelocity);
+        controller = null;
 
-    public void TossBall()
-    {
-        serveReady = false;
-        rb.AddForce(handVelocity * tossMultiplier);
+        yield return 0;
+
+        rb.velocity = Vector3.up * tossMultiplier;
     }
 }
