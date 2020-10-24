@@ -9,6 +9,7 @@ public class PassPlatform : MonoBehaviour
     public Transform leftHandTransform;
 
     public Transform headTransform;
+    public Transform rigTransform;
 
     private BoxCollider platform;
 
@@ -38,7 +39,12 @@ public class PassPlatform : MonoBehaviour
                 (rightHandTransform.position.z + leftHandTransform.position.z) / 2f
             );
 
-            Debug.Log("Angle: " + Vector3.Angle(Vector3.forward, (averageHandPosition - transform.position)));
+            Vector3 angleComparePoint = new Vector3(
+                averageHandPosition.x, transform.position.y, averageHandPosition.z
+            );
+
+            float platformAngle = Vector3.Angle((angleComparePoint - transform.position), (averageHandPosition - transform.position));
+            transform.rotation = Quaternion.Euler(platformAngle, rigTransform.rotation.eulerAngles.y, transform.rotation.z);
         }
     }
 
