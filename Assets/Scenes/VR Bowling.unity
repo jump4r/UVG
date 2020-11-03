@@ -1434,7 +1434,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &466141400
 Transform:
   m_ObjectHideFlags: 0
@@ -2560,12 +2560,12 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: faa57aeb29c1a5042a4de69774b316f6,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.15
+      value: 3.59
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: faa57aeb29c1a5042a4de69774b316f6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.8295971e-16
+      value: -0.05
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: faa57aeb29c1a5042a4de69774b316f6,
         type: 3}
@@ -5459,12 +5459,12 @@ GameObject:
   - component: {fileID: 1950889638}
   - component: {fileID: 1950889639}
   m_Layer: 0
-  m_Name: Pass Platform
+  m_Name: ras
   m_TagString: Pass
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1950889637
 Transform:
   m_ObjectHideFlags: 0
@@ -5490,8 +5490,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.57442766, y: 0.045038223, z: 1.038131}
-  m_Center: {x: 0.0015133619, y: 0.04, z: 0.50460875}
+  m_Size: {x: 0.69, y: 0.045038223, z: 1.1451805}
+  m_Center: {x: 0.0015133619, y: 0.04, z: 0.47034538}
 --- !u!114 &1950889639
 MonoBehaviour:
   m_ObjectHideFlags: 0

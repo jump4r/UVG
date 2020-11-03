@@ -43,8 +43,9 @@ public class PassPlatform : MonoBehaviour
                 averageHandPosition.x, transform.position.y, averageHandPosition.z
             );
 
-            float platformAngle = Vector3.Angle((angleComparePoint - transform.position), (averageHandPosition - transform.position));
-            transform.rotation = Quaternion.Euler(platformAngle, rigTransform.rotation.eulerAngles.y, transform.rotation.z);
+            float platformXAngle = Vector3.Angle((angleComparePoint - transform.position), (averageHandPosition - transform.position));
+            float platformZAngle = (rightHandTransform.rotation.eulerAngles.z + leftHandTransform.rotation.eulerAngles.z) / 2f;
+            transform.rotation = Quaternion.Euler(platformXAngle, rigTransform.rotation.eulerAngles.y, platformZAngle);
         }
     }
 
