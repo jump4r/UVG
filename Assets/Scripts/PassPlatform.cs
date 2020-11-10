@@ -38,12 +38,22 @@ public class PassPlatform : MonoBehaviour
                 (rightHandTransform.position.y + leftHandTransform.position.y) / 2f,
                 (rightHandTransform.position.z + leftHandTransform.position.z) / 2f
             );
-
-            Vector3 angleComparePoint = new Vector3(
+            Vector3 angleComparePointX = new Vector3(
                 averageHandPosition.x, transform.position.y, averageHandPosition.z
             );
+            float platformXAngle = Vector3.Angle((angleComparePointX - transform.position), (averageHandPosition - transform.position));
+            
+            /* Todo: Fix this, I'm not sure why the Y rotation angle isn't being tracked properly */
+            // Probably something to do with localPosition vs. global world space
+            Vector3 currentForwardRotation = rigTransform.rotation * Vector3.forward;
+            Vector3 angleComparePointY = new Vector3(leftHandTransform.position.x, rigTransform.position.y, leftHandTransform.position.z);
+            float platformYAngle = Vector3.Angle((currentForwardRotation - rigTransform.position), (angleComparePointY - rigTransform.position));
+            
+            // Debug.DrawRay(rigTransform.position, currentForwardRotation * 5f, Color.yellow, .2f);
+            // Debug.Log("Current Hand Position: " + leftHandTransform.position.x);
+            // Debug.DrawRay(rigTransform.position, angleComparePointY, Color.magenta, .2f);
+            /* **** */
 
-            float platformXAngle = Vector3.Angle((angleComparePoint - transform.position), (averageHandPosition - transform.position));
             float platformZAngle = (rightHandTransform.rotation.eulerAngles.z + leftHandTransform.rotation.eulerAngles.z) / 2f;
             transform.rotation = Quaternion.Euler(platformXAngle, rigTransform.rotation.eulerAngles.y, platformZAngle);
         }

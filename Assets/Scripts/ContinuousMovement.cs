@@ -70,7 +70,7 @@ public class ContinuousMovement : MonoBehaviour
         }
 
         verticalVelocity += Vector3.up * fallingSpeed * Time.fixedDeltaTime;
-        character.Move(verticalVelocity);
+        character.Move(verticalVelocity * Time.fixedDeltaTime);
     }
 
     private void CapsuleFollowHeadset()
