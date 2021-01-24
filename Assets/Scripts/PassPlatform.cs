@@ -23,12 +23,12 @@ public class PassPlatform : MonoBehaviour
         transform.position = new Vector3(headTransform.position.x, headTransform.position.y - 0.3f, headTransform.position.z);
         if (Vector3.Distance(rightHandTransform.position, leftHandTransform.position) < 0.2f && !platform.enabled)
         {
-            EnablePlatform();
+            platform.enabled = true;
         }
 
         else
         {
-            DisablePlatform();
+            platform.enabled = false;
         }
 
         if (platform.enabled)
@@ -43,29 +43,21 @@ public class PassPlatform : MonoBehaviour
             );
             float platformXAngle = Vector3.Angle((angleComparePointX - transform.position), (averageHandPosition - transform.position));
             
-            /* Todo: Fix this, I'm not sure why the Y rotation angle isn't being tracked properly */
-            // Probably something to do with localPosition vs. global world space
-            Vector3 currentForwardRotation = rigTransform.rotation * Vector3.forward;
-            Vector3 angleComparePointY = new Vector3(leftHandTransform.position.x, rigTransform.position.y, leftHandTransform.position.z);
-            float platformYAngle = Vector3.Angle((currentForwardRotation - rigTransform.position), (angleComparePointY - rigTransform.position));
+            Vector3 angleComparePointY = new Vector3(
+                averageHandPosition.x, transform.position.y, averageHandPosition.z
+            );
+
+            Vector3 yDirection = (angleComparePointY - transform.position).normalized;
+            Vector3 globalForward = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
+
+            Debug.DrawLine(transform.position, angleComparePointY, Color.yellow, .2f);
+            Debug.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f), Color.magenta, .2f);
             
-            // Debug.DrawRay(rigTransform.position, currentForwardRotation * 5f, Color.yellow, .2f);
-            // Debug.Log("Current Hand Position: " + leftHandTransform.position.x);
-            // Debug.DrawRay(rigTransform.position, angleComparePointY, Color.magenta, .2f);
-            /* **** */
+            float platformYAngle = Vector3.Angle(Vector3.forward, yDirection);
+            Debug.Log("Y Axis Rotation: " + platformYAngle);
 
             float platformZAngle = (rightHandTransform.rotation.eulerAngles.z + leftHandTransform.rotation.eulerAngles.z) / 2f;
-            transform.rotation = Quaternion.Euler(platformXAngle, rigTransform.rotation.eulerAngles.y, platformZAngle);
+            transform.rotation = Quaternion.Euler(platformXAngle, platformYAngle, platformZAngle);
         }
-    }
-
-    public void EnablePlatform()
-    {
-        platform.enabled = true;
-    }
-
-    public void DisablePlatform()
-    {
-        platform.enabled = false;
     }
 }
