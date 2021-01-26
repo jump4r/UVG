@@ -33,6 +33,8 @@ public class PassPlatform : MonoBehaviour
 
         if (platform.enabled)
         {
+            // X Position & Angle
+            ////////////////////
             Vector3 averageHandPosition = new Vector3(
                 (rightHandTransform.position.x + leftHandTransform.position.x) / 2f,
                 (rightHandTransform.position.y + leftHandTransform.position.y) / 2f,
@@ -43,6 +45,8 @@ public class PassPlatform : MonoBehaviour
             );
             float platformXAngle = Vector3.Angle((angleComparePointX - transform.position), (averageHandPosition - transform.position));
             
+            // Y Position & Angle
+            ////////////////////
             Vector3 angleComparePointY = new Vector3(
                 averageHandPosition.x, transform.position.y, averageHandPosition.z
             );
@@ -53,9 +57,11 @@ public class PassPlatform : MonoBehaviour
             Debug.DrawLine(transform.position, angleComparePointY, Color.yellow, .2f);
             Debug.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f), Color.magenta, .2f);
             
-            float platformYAngle = Vector3.Angle(Vector3.forward, yDirection);
+            float platformYAngle = Vector3.SignedAngle(Vector3.forward, yDirection, Vector3.up);
             Debug.Log("Y Axis Rotation: " + platformYAngle);
 
+            // Z Position & Angle
+            /////////////////////
             float platformZAngle = (rightHandTransform.rotation.eulerAngles.z + leftHandTransform.rotation.eulerAngles.z) / 2f;
             transform.rotation = Quaternion.Euler(platformXAngle, platformYAngle, platformZAngle);
         }
