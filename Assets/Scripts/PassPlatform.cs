@@ -21,14 +21,17 @@ public class PassPlatform : MonoBehaviour
     void Update()
     {
         transform.position = new Vector3(headTransform.position.x, headTransform.position.y - 0.3f, headTransform.position.z);
-        if (Vector3.Distance(rightHandTransform.position, leftHandTransform.position) < 0.2f && !platform.enabled)
+        if (Vector3.Distance(rightHandTransform.position, leftHandTransform.position) < 0.2f)
         {
             platform.enabled = true;
+            DisableHandColliders();
         }
 
         else
         {
             platform.enabled = false;
+            Debug.Log("Call Enable Hand Colliders: " + platform.enabled);
+            EnableHandColliders();
         }
 
         if (platform.enabled)
@@ -43,7 +46,8 @@ public class PassPlatform : MonoBehaviour
             Vector3 angleComparePointX = new Vector3(
                 averageHandPosition.x, transform.position.y, averageHandPosition.z
             );
-            float platformXAngle = Vector3.Angle((angleComparePointX - transform.position), (averageHandPosition - transform.position));
+            // float platformXAngle = Vector3.Angle((angleComparePointX - transform.position), (averageHandPosition - transform.position));
+            float platformXAngle = Vector3.SignedAngle((angleComparePointX - transform.position), (averageHandPosition - transform.position), rigTransform.rotation * Vector3.right);
             
             // Y Position & Angle
             ////////////////////
@@ -53,17 +57,24 @@ public class PassPlatform : MonoBehaviour
 
             Vector3 yDirection = (angleComparePointY - transform.position).normalized;
             Vector3 globalForward = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
-
-            Debug.DrawLine(transform.position, angleComparePointY, Color.yellow, .2f);
-            Debug.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f), Color.magenta, .2f);
-            
             float platformYAngle = Vector3.SignedAngle(Vector3.forward, yDirection, Vector3.up);
-            Debug.Log("Y Axis Rotation: " + platformYAngle);
 
             // Z Position & Angle
             /////////////////////
             float platformZAngle = (rightHandTransform.rotation.eulerAngles.z + leftHandTransform.rotation.eulerAngles.z) / 2f;
             transform.rotation = Quaternion.Euler(platformXAngle, platformYAngle, platformZAngle);
         }
+    }
+
+    private void DisableHandColliders()
+    {
+        leftHandTransform.gameObject.GetComponent<BoxCollider>().enabled = false;
+        rightHandTransform.gameObject.GetComponent<BoxCollider>().enabled = false;
+    }
+
+    private void EnableHandColliders()
+    {
+        leftHandTransform.gameObject.GetComponent<BoxCollider>().enabled = true;
+        rightHandTransform.gameObject.GetComponent<BoxCollider>().enabled = true;
     }
 }

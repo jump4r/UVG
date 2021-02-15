@@ -4,9 +4,15 @@ using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit;
 
+public static class PlayerConstants
+{
+    public const float MOVE_SPEED = 2f;
+    public const float AIR_SPEED = 0.75f;
+}
+
 public class ContinuousMovement : MonoBehaviour
 {
-    public float speed = 1f;
+    public float moveSpeed = PlayerConstants.MOVE_SPEED;
     public XRNode inputSource;
     public XRNode secondaryInputSource;
     private Vector2 inputAxis;
@@ -46,7 +52,7 @@ public class ContinuousMovement : MonoBehaviour
         
         Quaternion headYaw = Quaternion.Euler(0, rig.cameraGameObject.transform.eulerAngles.y, 0);
         Vector3 direction = headYaw * new Vector3(inputAxis.x, 0, inputAxis.y);
-        character.Move(direction * Time.fixedDeltaTime * speed);
+        character.Move(direction * Time.fixedDeltaTime * moveSpeed);
 
         // gravity
         if (CheckIfGrounded())
@@ -54,12 +60,14 @@ public class ContinuousMovement : MonoBehaviour
             fallingSpeed = 0;
             verticalVelocity = Vector3.zero;
             jumpReady = true;
+            moveSpeed = PlayerConstants.MOVE_SPEED;
         }
 
         else
         {
             fallingSpeed += gravity * Time.fixedDeltaTime;
             jumpReady = false;
+            moveSpeed = PlayerConstants.AIR_SPEED;
         }
 
         // Jump

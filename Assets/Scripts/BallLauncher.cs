@@ -5,9 +5,14 @@ using UnityEngine;
 public class BallLauncher : MonoBehaviour
 {
     public GameObject ballPrefab;
+    [SerializeField]
+    private float launchSpeed = 10f;
+    
+    [SerializeField]
+    private float launchFrequency = 5f;
     void Start()
     {
-        InvokeRepeating("LaunchBall", 5f, 5f);
+        InvokeRepeating("LaunchBall", launchFrequency, launchFrequency);
     }
 
     private void LaunchBall()
@@ -15,7 +20,7 @@ public class BallLauncher : MonoBehaviour
         GameObject instance = Instantiate(ballPrefab, transform.position, Quaternion.identity);
         Rigidbody rb = instance.GetComponent<Rigidbody>();
         Ball volleyball = instance.GetComponent<Ball>();
-        rb.velocity = transform.rotation * Vector3.forward * 10f;
+        rb.velocity = transform.rotation * Vector3.forward * launchSpeed;
         volleyball.hitMultiplier = 10f;
     }
 }
