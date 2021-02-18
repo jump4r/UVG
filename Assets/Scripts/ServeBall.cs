@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
@@ -11,6 +11,7 @@ public class ServeBall : XRGrabInteractable
     private bool serveReady = false;
     private Rigidbody rb;
     public float tossMultiplier = 2f;
+    public GameObject Ball;
 
     // Disable script in game,
     // Enable only when servering
@@ -25,7 +26,6 @@ public class ServeBall : XRGrabInteractable
         base.OnSelectEnter(interactor);
         if (interactor is XRDirectInteractor)
         {
-            Debug.Log("Grab");
             controller = interactor.GetComponent<XRController>();
         }
     }
@@ -49,6 +49,15 @@ public class ServeBall : XRGrabInteractable
 
         yield return 0;
 
-        rb.velocity = Vector3.up * tossMultiplier;
+        rb.velocity *= tossMultiplier;
+
+        Invoke("TransitionToRegularBall", 0.25f);
+    }
+
+    void TransitionToRegularBall()
+    {
+        GameObject b = Instantiate(Ball, transform.position, transform.rotation);
+        b.GetComponent<Rigidbody>().velocity = rb.velocity;
+        Destroy(gameObject);
     }
 }
