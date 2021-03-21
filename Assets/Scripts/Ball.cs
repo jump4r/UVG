@@ -5,26 +5,13 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     private Rigidbody rb;
-    public float hitMultiplier = 5f;
-    public float passMultiplier = 5f;
-
     void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    public void OnCollisionEnter(Collision col)
+    public void SetVelocity(Vector3 newVel)
     {
-        if (col.gameObject.tag == "Hand")
-        {
-            ContactPoint firstContactPoint = col.contacts[0];
-            rb.velocity = firstContactPoint.normal * hitMultiplier;
-        }
-
-        else if (col.gameObject.tag == "Pass")
-        {
-            ContactPoint firstContactPoint = col.contacts[0];
-            rb.velocity = firstContactPoint.normal * passMultiplier;
-        }
+        rb.velocity = newVel;
     }
 }

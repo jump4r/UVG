@@ -46,11 +46,9 @@ public class ServeBall : XRGrabInteractable
     {
         InputDevices.GetDeviceAtXRNode(controller.controllerNode).TryGetFeatureValue(CommonUsages.deviceVelocity, out handVelocity);
         controller = null;
-
         yield return 0;
 
-        rb.velocity *= tossMultiplier;
-
+        rb.velocity = Vector3.up * (1 + handVelocity.magnitude) * tossMultiplier;
         Invoke("TransitionToRegularBall", 0.25f);
     }
 

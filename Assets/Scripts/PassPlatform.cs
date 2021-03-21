@@ -12,10 +12,26 @@ public class PassPlatform : MonoBehaviour
     public Transform rigTransform;
 
     private BoxCollider platform;
+    private float passMultiplier = 5f;
 
     void Start()
     {
        platform = GetComponent<BoxCollider>(); 
+    }
+
+    void OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.tag == "Ball")
+        {
+            Ball volleyball = col.gameObject.GetComponent<Ball>();
+            
+            ContactPoint firstContactPoint = col.contacts[0];
+
+            // Repace new velocity to be affected by ball speed.
+            Vector3 newBallVelocity = firstContactPoint.normal * passMultiplier;
+
+            volleyball.SetVelocity(newBallVelocity * -1f);
+        }
     }
 
     void Update()
@@ -30,7 +46,6 @@ public class PassPlatform : MonoBehaviour
         else
         {
             platform.enabled = false;
-            Debug.Log("Call Enable Hand Colliders: " + platform.enabled);
             EnableHandColliders();
         }
 
@@ -46,7 +61,6 @@ public class PassPlatform : MonoBehaviour
             Vector3 angleComparePointX = new Vector3(
                 averageHandPosition.x, transform.position.y, averageHandPosition.z
             );
-            // float platformXAngle = Vector3.Angle((angleComparePointX - transform.position), (averageHandPosition - transform.position));
             float platformXAngle = Vector3.SignedAngle((angleComparePointX - transform.position), (averageHandPosition - transform.position), rigTransform.rotation * Vector3.right);
             
             // Y Position & Angle
