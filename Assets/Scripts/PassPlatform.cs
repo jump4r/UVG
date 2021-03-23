@@ -12,7 +12,7 @@ public class PassPlatform : MonoBehaviour
     public Transform rigTransform;
 
     private BoxCollider platform;
-    private float passMultiplier = 5f;
+    private float passMultiplier = 1.5f;
 
     void Start()
     {
@@ -26,11 +26,10 @@ public class PassPlatform : MonoBehaviour
             Ball volleyball = col.gameObject.GetComponent<Ball>();
             
             ContactPoint firstContactPoint = col.contacts[0];
+            Vector3 newBallDirection = ((firstContactPoint.normal * -1f) + Vector3.up) / 2f;
+            Vector3 newBallVelocity = (newBallDirection *  passMultiplier * col.rigidbody.velocity.magnitude);
 
-            // Repace new velocity to be affected by ball speed.
-            Vector3 newBallVelocity = firstContactPoint.normal * passMultiplier;
-
-            volleyball.SetVelocity(newBallVelocity * -1f);
+            volleyball.SetVelocity(newBallVelocity);
         }
     }
 
