@@ -6,6 +6,7 @@ using UnityEngine.XR;
 public class Hand : MonoBehaviour
 {
     public float hitMultiplier = 3f;
+    private float energyLost = .75f;
 
     [SerializeField]
     private XRNode handInputDevice;
@@ -21,7 +22,8 @@ public class Hand : MonoBehaviour
             ContactPoint firstContactPoint = col.contacts[0];
             InputDevices.GetDeviceAtXRNode(handInputDevice).TryGetFeatureValue(CommonUsages.deviceVelocity, out deviceVelocity);
 
-            Vector3 newBallVelocity = firstContactPoint.normal * hitMultiplier * deviceVelocity.magnitude;
+            Vector3 newBallVelocity = firstContactPoint.normal * deviceVelocity.magnitude * energyLost * volleyball.velBeforePhysicsUpdate.magnitude;
+            
             volleyball.SetVelocity(newBallVelocity * -1f);
         }
     }

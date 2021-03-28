@@ -12,9 +12,6 @@ public class ServeBall : XRGrabInteractable
     private Rigidbody rb;
     public float tossMultiplier = 2f;
     public GameObject Ball;
-
-    // Disable script in game,
-    // Enable only when servering
     
     void Start()
     {

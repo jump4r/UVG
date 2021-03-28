@@ -15,13 +15,7 @@ public class ServeBallSpawner : MonoBehaviour
     {
         SpawnBall();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    
     void OnTriggerExit(Collider col)
     {
         if (col.gameObject.name == spawnedBall.name)

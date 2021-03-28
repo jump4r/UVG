@@ -12,7 +12,8 @@ public class PassPlatform : MonoBehaviour
     public Transform rigTransform;
 
     private BoxCollider platform;
-    private float passMultiplier = 1.5f;
+
+    private float energyLost = 0.75f;
 
     void Start()
     {
@@ -26,8 +27,9 @@ public class PassPlatform : MonoBehaviour
             Ball volleyball = col.gameObject.GetComponent<Ball>();
             
             ContactPoint firstContactPoint = col.contacts[0];
-            Vector3 newBallDirection = ((firstContactPoint.normal * -1f) + Vector3.up).normalized;
-            Vector3 newBallVelocity = (newBallDirection * col.rigidbody.velocity.magnitude * platformMovementMultiplication());
+            // Vector3 newBallDirection = ((firstContactPoint.normal * -1f) + Vector3.up).normalized;
+            Vector3 newBallDirection = (firstContactPoint.normal * -1f).normalized;
+            Vector3 newBallVelocity = (newBallDirection * energyLost * volleyball.velBeforePhysicsUpdate.magnitude * platformMovementMultiplication());
 
             volleyball.SetVelocity(newBallVelocity);
         }
@@ -83,10 +85,9 @@ public class PassPlatform : MonoBehaviour
     
         Vector3 averageHandVelocity = (leftHandVelocity + rightHandVelocity) / 2f;
         float platformMovementAngle = Vector3.Angle(Vector3.up, averageHandVelocity);
+        float platformSpeedClamp = Mathf.Max(1f, Mathf.Log(averageHandVelocity.magnitude, 2f));
+        float platformAdjustment = platformMovementAngle < 90f ? platformSpeedClamp : 1f / platformSpeedClamp;
 
-        float platformAdjustment = platformMovementAngle < 90f ? (1f + averageHandVelocity.magnitude) : 1f / (1f + averageHandVelocity.magnitude);
-
-        Debug.Log("Average Hand Speed: " + averageHandVelocity.magnitude);
         return platformAdjustment;
     }
 
