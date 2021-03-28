@@ -20,9 +20,16 @@ public class Hand : MonoBehaviour
             Ball volleyball = col.gameObject.GetComponent<Ball>();
             ContactPoint firstContactPoint = col.contacts[0];
             InputDevices.GetDeviceAtXRNode(handInputDevice).TryGetFeatureValue(CommonUsages.deviceVelocity, out deviceVelocity);
-            
+
             Vector3 newBallVelocity = firstContactPoint.normal * hitMultiplier * deviceVelocity.magnitude;
             volleyball.SetVelocity(newBallVelocity * -1f);
         }
+    }
+
+    public Vector3 GetHandVelocity()
+    {
+        Vector3 outVelocity;
+        InputDevices.GetDeviceAtXRNode(handInputDevice).TryGetFeatureValue(CommonUsages.deviceVelocity, out outVelocity);
+        return outVelocity;
     }
 }

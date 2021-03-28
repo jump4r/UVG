@@ -26,8 +26,8 @@ public class PassPlatform : MonoBehaviour
             Ball volleyball = col.gameObject.GetComponent<Ball>();
             
             ContactPoint firstContactPoint = col.contacts[0];
-            Vector3 newBallDirection = ((firstContactPoint.normal * -1f) + Vector3.up) / 2f;
-            Vector3 newBallVelocity = (newBallDirection *  passMultiplier * col.rigidbody.velocity.magnitude);
+            Vector3 newBallDirection = ((firstContactPoint.normal * -1f) + Vector3.up).normalized;
+            Vector3 newBallVelocity = (newBallDirection * col.rigidbody.velocity.magnitude * platformMovementMultiplication());
 
             volleyball.SetVelocity(newBallVelocity);
         }
@@ -51,7 +51,6 @@ public class PassPlatform : MonoBehaviour
         if (platform.enabled)
         {
             // X Position & Angle
-            ////////////////////
             Vector3 averageHandPosition = new Vector3(
                 (rightHandTransform.position.x + leftHandTransform.position.x) / 2f,
                 (rightHandTransform.position.y + leftHandTransform.position.y) / 2f,
@@ -63,7 +62,6 @@ public class PassPlatform : MonoBehaviour
             float platformXAngle = Vector3.SignedAngle((angleComparePointX - transform.position), (averageHandPosition - transform.position), rigTransform.rotation * Vector3.right);
             
             // Y Position & Angle
-            ////////////////////
             Vector3 angleComparePointY = new Vector3(
                 averageHandPosition.x, transform.position.y, averageHandPosition.z
             );
@@ -73,10 +71,23 @@ public class PassPlatform : MonoBehaviour
             float platformYAngle = Vector3.SignedAngle(Vector3.forward, yDirection, Vector3.up);
 
             // Z Position & Angle
-            /////////////////////
             float platformZAngle = (rightHandTransform.rotation.eulerAngles.z + leftHandTransform.rotation.eulerAngles.z) / 2f;
             transform.rotation = Quaternion.Euler(platformXAngle, platformYAngle, platformZAngle);
         }
+    }
+
+    private float platformMovementMultiplication()
+    {
+        Vector3 leftHandVelocity = leftHandTransform.gameObject.GetComponent<Hand>().GetHandVelocity();
+        Vector3 rightHandVelocity = rightHandTransform.gameObject.GetComponent<Hand>().GetHandVelocity();
+    
+        Vector3 averageHandVelocity = (leftHandVelocity + rightHandVelocity) / 2f;
+        float platformMovementAngle = Vector3.Angle(Vector3.up, averageHandVelocity);
+
+        float platformAdjustment = platformMovementAngle < 90f ? (1f + averageHandVelocity.magnitude) : 1f / (1f + averageHandVelocity.magnitude);
+
+        Debug.Log("Average Hand Speed: " + averageHandVelocity.magnitude);
+        return platformAdjustment;
     }
 
     private void DisableHandColliders()

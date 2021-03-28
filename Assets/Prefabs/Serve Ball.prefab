@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 5390199553672634500}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.135, y: 0.759, z: -4.4168706}
-  m_LocalScale: {x: 0.3119983, y: 0.3119983, z: 0.3119983}
+  m_LocalScale: {x: 0.20442131, y: 0.20442131, z: 0.20442131}
   m_Children:
   - {fileID: 5390199555669596799}
   m_Father: {fileID: 0}
@@ -189,7 +189,7 @@ MonoBehaviour:
   m_GravityOnDetach: 0
   m_RetainTransformParent: 1
   tossMultiplier: 1.5
-  Ball: {fileID: 4776453877328598367, guid: b7113ff1142f0fc48b6358ba21af3c79, type: 3}
+  Ball: {fileID: 4839745517978388878, guid: 09d3c171f02b3704db522367b82bb8b8, type: 3}
 --- !u!1 &5390199555669596796
 GameObject:
   m_ObjectHideFlags: 0
