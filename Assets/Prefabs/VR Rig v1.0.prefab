@@ -31,7 +31,6 @@ Transform:
   - {fileID: 3281889163930204622}
   - {fileID: 3281889162830695772}
   - {fileID: 3281889163617036112}
-  - {fileID: 3281889162887172397}
   m_Father: {fileID: 3281889163540070106}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -205,67 +204,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitMultiplier: 2
   handInputDevice: 5
---- !u!1 &3281889162887172386
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3281889162887172397}
-  - component: {fileID: 3281889162887172399}
-  - component: {fileID: 3281889162887172396}
-  m_Layer: 0
-  m_Name: PP2
-  m_TagString: Pass
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &3281889162887172397
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3281889162887172386}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 3281889162182767762}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3281889162887172399
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3281889162887172386}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 0.07, z: 0.94}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3281889162887172396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3281889162887172386}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7feca32427da180489eb0d12b4415efe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rightHandTransform: {fileID: 3281889162830695772}
-  leftHandTransform: {fileID: 3281889163930204622}
-  headTransform: {fileID: 3281889163399328588}
-  rigTransform: {fileID: 3281889163540070106}
 --- !u!1 &3281889163399328577
 GameObject:
   m_ObjectHideFlags: 0
@@ -418,7 +356,7 @@ GameObject:
   - component: {fileID: 3281889163540070081}
   - component: {fileID: 3281889163540070080}
   m_Layer: 10
-  m_Name: VR Rig 1
+  m_Name: VR Rig v1.0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

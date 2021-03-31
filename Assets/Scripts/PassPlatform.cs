@@ -12,6 +12,8 @@ public class PassPlatform : MonoBehaviour
     public Transform rigTransform;
 
     private BoxCollider platform;
+    [SerializeField]
+    private HandGestures handGestures;
 
     private float energyLost = 0.75f;
 
@@ -38,7 +40,8 @@ public class PassPlatform : MonoBehaviour
     void Update()
     {
         transform.position = new Vector3(headTransform.position.x, headTransform.position.y - 0.3f, headTransform.position.z);
-        if (Vector3.Distance(rightHandTransform.position, leftHandTransform.position) < 0.2f)
+        
+        if (handGestures.currentGesture == HandGesture.Pass)
         {
             platform.enabled = true;
             DisableHandColliders();
@@ -52,7 +55,13 @@ public class PassPlatform : MonoBehaviour
 
         if (platform.enabled)
         {
-            // X Position & Angle
+           setPlatformAngle();
+        }
+    }
+
+    private void setPlatformAngle()
+    {
+         // X Position & Angle
             Vector3 averageHandPosition = new Vector3(
                 (rightHandTransform.position.x + leftHandTransform.position.x) / 2f,
                 (rightHandTransform.position.y + leftHandTransform.position.y) / 2f,
@@ -75,9 +84,7 @@ public class PassPlatform : MonoBehaviour
             // Z Position & Angle
             float platformZAngle = (rightHandTransform.rotation.eulerAngles.z + leftHandTransform.rotation.eulerAngles.z) / 2f;
             transform.rotation = Quaternion.Euler(platformXAngle, platformYAngle, platformZAngle);
-        }
     }
-
     private float platformMovementMultiplication()
     {
         Vector3 leftHandVelocity = leftHandTransform.gameObject.GetComponent<Hand>().GetHandVelocity();
