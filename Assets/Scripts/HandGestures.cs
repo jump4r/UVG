@@ -33,7 +33,6 @@ public class HandGestures : MonoBehaviour
         )
         {
             currentGesture = HandGesture.Set;
-            Debug.Log("Player Can Set Now");
         }
 
         else if (CheckHandDistanceThreshold())

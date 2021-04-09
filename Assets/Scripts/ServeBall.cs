@@ -18,26 +18,27 @@ public class ServeBall : XRGrabInteractable
         rb = GetComponent<Rigidbody>();   
     }
 
-    protected override void OnSelectEnter(XRBaseInteractor interactor)
-    {
-        base.OnSelectEnter(interactor);
-        if (interactor is XRDirectInteractor)
-        {
-            controller = interactor.GetComponent<XRController>();
-        }
-    }
+    // Todo: Replace with Action-Based Equivilents;
+    // protected override void OnSelectEnter(XRBaseInteractor interactor)
+    // {
+    //     base.OnSelectEnter(interactor);
+    //     if (interactor is XRDirectInteractor)
+    //     {
+    //         controller = interactor.GetComponent<XRController>();
+    //     }
+    // }
 
-    protected override void OnSelectExit(XRBaseInteractor interactor)
-    {
-        base.OnSelectExit(interactor);
-        if (interactor is XRDirectInteractor)
-        {
-            if (controller)
-            {
-                StartCoroutine(TossBall());
-            }
-        }
-    }
+    // protected override void OnSelectExit(XRBaseInteractor interactor)
+    // {
+    //     base.OnSelectExit(interactor);
+    //     if (interactor is XRDirectInteractor)
+    //     {
+    //         if (controller)
+    //         {
+    //             StartCoroutine(TossBall());
+    //         }
+    //     }
+    // }
 
     IEnumerator TossBall()
     {
