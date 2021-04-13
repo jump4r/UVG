@@ -6,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class ServeBall : XRGrabInteractable
 {
-    private XRController controller;
+    private ActionBasedController controller;
     private Vector3 handVelocity;
     private bool serveReady = false;
     private Rigidbody rb;
@@ -18,31 +18,31 @@ public class ServeBall : XRGrabInteractable
         rb = GetComponent<Rigidbody>();   
     }
 
-    // Todo: Replace with Action-Based Equivilents;
-    // protected override void OnSelectEnter(XRBaseInteractor interactor)
-    // {
-    //     base.OnSelectEnter(interactor);
-    //     if (interactor is XRDirectInteractor)
-    //     {
-    //         controller = interactor.GetComponent<XRController>();
-    //     }
-    // }
+    protected override void OnSelectEntered(XRBaseInteractor interactor)
+    {
+        base.OnSelectEntered(interactor);
+        if (interactor is XRDirectInteractor)
+        {
+            controller = interactor.GetComponent<ActionBasedController>();
+        }
+    }
 
-    // protected override void OnSelectExit(XRBaseInteractor interactor)
-    // {
-    //     base.OnSelectExit(interactor);
-    //     if (interactor is XRDirectInteractor)
-    //     {
-    //         if (controller)
-    //         {
-    //             StartCoroutine(TossBall());
-    //         }
-    //     }
-    // }
+    protected override void OnSelectExited(XRBaseInteractor interactor)
+    {
+        base.OnSelectExited(interactor);
+        if (interactor is XRDirectInteractor)
+        {
+            if (controller)
+            {
+                StartCoroutine(TossBall());
+            }
+        }
+    }
 
     IEnumerator TossBall()
     {
-        InputDevices.GetDeviceAtXRNode(controller.controllerNode).TryGetFeatureValue(CommonUsages.deviceVelocity, out handVelocity);
+        // InputDevices.GetDeviceAtXRNode(controller.controllerNode).TryGetFeatureValue(CommonUsages.deviceVelocity, out handVelocity);
+        handVelocity = controller.gameObject.GetComponent<Hand>().GetHandVelocity();
         controller = null;
         yield return 0;
 

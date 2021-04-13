@@ -11,6 +11,7 @@ public class PlayerJump : MonoBehaviour
     [SerializeField]
     private LayerMask groundLayer;
     private CharacterController character;
+    private ActionBasedContinuousMoveProvider playerMove;
     private float additionalHeight = 0.2f;
     private float gravity = -9.81f;
     private float fallingSpeed = 0;
@@ -25,6 +26,7 @@ public class PlayerJump : MonoBehaviour
     void Start()
     {
         character = GetComponent<CharacterController>();
+        playerMove = GetComponent<ActionBasedContinuousMoveProvider>();
     }
 
     void Update()
@@ -39,12 +41,14 @@ public class PlayerJump : MonoBehaviour
             fallingSpeed = 0;
             verticalVelocity = Vector3.zero;
             jumpReady = true;
+            playerMove.moveSpeed = PlayerConstants.MOVE_SPEED;
         }
 
         else
         {
             fallingSpeed += gravity * Time.fixedDeltaTime;
             jumpReady = false;
+            playerMove.moveSpeed = PlayerConstants.AIR_SPEED;
         }
 
         if (jumpReady && jumpPressed == 1f) 
