@@ -27,11 +27,12 @@ public class HandGestures : MonoBehaviour
     {
         transform.position = new Vector3(headTransform.position.x, headTransform.position.y - 0.3f, headTransform.position.z);
         if (
-            CheckSettingTriggersActive() &&
-            CheckHandDistanceThreshold() &&
-            CheckHandsAboveHead()
+            CheckSettingTriggersActive() // &&
+            // CheckHandDistanceThreshold() &&
+            // CheckHandsAboveHead()
         )
         {
+
             currentGesture = HandGesture.Set;
         }
 

@@ -14,11 +14,6 @@ public class Ball : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    public void SetVelocity(Vector3 newVel)
-    {
-        rb.velocity = newVel;
-    }
-
     void FixedUpdate()
     {
         velBeforePhysicsUpdate = rb.velocity;
@@ -30,6 +25,10 @@ public class Ball : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+    public void SetVelocity(Vector3 newVel)
+    {
+        rb.velocity = newVel;
     }
 
 }

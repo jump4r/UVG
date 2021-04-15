@@ -8,6 +8,7 @@ TagManager:
   - Hand
   - Pass
   - Destroyer
+  - Gestures
   layers:
   - Default
   - TransparentFX
