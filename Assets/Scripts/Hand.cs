@@ -48,4 +48,16 @@ public class Hand : MonoBehaviour
         float triggerInput = triggerAction.action.ReadValue<float>();
         return (triggerInput > 0f);
     }
+
+    // Turns off hand collider after setting, turns back on after .25s
+    public void ResetHandCollider()
+    {
+        GetComponent<BoxCollider>().enabled = false;
+        Invoke("TurnOnHandCollider", 0.25f);
+    }
+
+    private void TurnOnHandCollider()
+    {
+        GetComponent<BoxCollider>().enabled = true;
+    }
 }

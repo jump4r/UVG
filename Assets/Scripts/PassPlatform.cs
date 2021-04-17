@@ -44,13 +44,13 @@ public class PassPlatform : MonoBehaviour
         if (handGestures.currentGesture == HandGesture.Pass)
         {
             platform.enabled = true;
-            DisableHandColliders();
+            // DisableHandColliders();
         }
 
         else
         {
             platform.enabled = false;
-            EnableHandColliders();
+            // EnableHandColliders();
         }
 
         if (platform.enabled)

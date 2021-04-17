@@ -10,11 +10,13 @@ public class PlayerSetter : MonoBehaviour
     [SerializeField]
     private Hand rightHand;
     private Ball volleyball;
+    private GameObject player;
     private HandGestures handGestures;
-    private float setSpeedMultiplier = 1.5f;
+    private float setSpeedMultiplier = 2.5f;
     void Start()
     {
         handGestures = GameObject.FindGameObjectWithTag("Gestures").GetComponent<HandGestures>();
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -36,10 +38,13 @@ public class PlayerSetter : MonoBehaviour
         else {
             if (volleyball != null)
             {
+                rightHand.ResetHandCollider();
+                leftHand.ResetHandCollider();
+
                 Rigidbody ballRb = volleyball.GetComponent<Rigidbody>();
                 ballRb.useGravity = true;
 
-                Vector3 newBallVel = ((leftHand.GetHandVelocity() + rightHand.GetHandVelocity()) / 2f) * setSpeedMultiplier;
+                Vector3 newBallVel = player.transform.rotation * (((leftHand.GetHandVelocity() + rightHand.GetHandVelocity()) / 2f) * setSpeedMultiplier);
                 ballRb.velocity = newBallVel;
 
 
