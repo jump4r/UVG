@@ -9,7 +9,7 @@ public class Ball : MonoBehaviour
     public Vector3 velBeforePhysicsUpdate { get; private set;} = Vector3.zero;
     public Vector3 estimatedLandingPos { get; private set; } = Vector3.zero;
     
-    private int arcPoints = 25;
+    private int arcPoints = 50;
     private Vector3[] projectedPath;
     
     void Awake()
@@ -43,15 +43,12 @@ public class Ball : MonoBehaviour
     public void CalculatePath()
     {
         float g = Physics.gravity.y;
-
-        Debug.Log("During Calculate Path Call -- RB Vel: " + rb.velocity);
         Vector3 velocity = rb.velocity;
-
         Vector3 initialPoint = transform.position;
 
         for(int i = 0; i < projectedPath.Length; i++)
         {
-            float t = i * (Time.fixedDeltaTime * 10);
+            float t = i * (Time.fixedDeltaTime * 5);
             float x = initialPoint.x + (velocity.x * t);
             float z = initialPoint.z + (velocity.z * t);
             float y = initialPoint.y + (velocity.y * t) + (g * Mathf.Pow(t, 2) / 2);

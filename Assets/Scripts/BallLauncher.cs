@@ -24,8 +24,7 @@ public class BallLauncher : MonoBehaviour
         Rigidbody rb = instance.GetComponent<Rigidbody>();
         rb.velocity = transform.rotation * Vector3.forward * launchSpeed;
 
-        // Trigger Launch Event, Calcualte Trajectory beforehand since we need to do it this frame
-        Debug.Log("Before Calculate Path Call -- Rigidbody Vel: " + rb.velocity);
+        // Trigger Launch Event, Calcualte Trajectory beforehand since we need to do it this frame 
         volleyball.CalculatePath();
         OnLaunch(volleyball);
     }
