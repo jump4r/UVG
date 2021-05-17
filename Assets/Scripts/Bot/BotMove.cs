@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BotMove : MonoBehaviour
 {
+    private BotPlayer botPlayer;
+
     [SerializeField]
     private float moveSpeed;
     private Vector3 destinationPoint;
@@ -21,11 +23,11 @@ public class BotMove : MonoBehaviour
     void Start()
     {
         BallLauncher.OnLaunch += CalculateDestinationPoint;
+        botPlayer = GetComponent<BotPlayer>();
         botHeight = GetComponent<CapsuleCollider>().height;
         botRadius = GetComponent<CapsuleCollider>().radius;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (destinationPoint != Vector3.zero)
@@ -57,6 +59,13 @@ public class BotMove : MonoBehaviour
 
     void CalculateDestinationPoint(Ball volleyball)
     {
+        Team landingTeam = VolleyballGameManager.instance.FindTeamLandingZone();
+        Debug.Log("Landing team: " + landingTeam);
+        if (landingTeam != botPlayer.team)
+        {
+            return;
+        }
+
         currentBall = volleyball;
         destinationPoint = currentBall.FindNearestYPointOnPath(transform.position.y);
     }

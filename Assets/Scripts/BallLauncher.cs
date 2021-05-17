@@ -14,10 +14,16 @@ public class BallLauncher : MonoBehaviour
     private float launchFrequency = 5f;
     void Start()
     {
-        InvokeRepeating("LaunchBall", launchFrequency, launchFrequency);
+        InvokeLaunch(launchFrequency);
     }
 
-    private void LaunchBall()
+
+    public void InvokeLaunch(float delay)
+    {
+        Invoke("LaunchBall", delay);
+    }
+
+    public void LaunchBall()
     {
         GameObject instance = Instantiate(ballPrefab, transform.position, Quaternion.identity);
         Ball volleyball = instance.GetComponent<Ball>();
@@ -26,6 +32,14 @@ public class BallLauncher : MonoBehaviour
 
         // Trigger Launch Event, Calcualte Trajectory beforehand since we need to do it this frame 
         volleyball.CalculatePath();
+        volleyball.launcher = this;
+
+        // Update Vball Game Manager State
+        VolleyballGameManager.instance.amountOfHits = 0;
+        VolleyballGameManager.instance.currentPossesion = Team.BLUE;
+        VolleyballGameManager.instance.currentBall = volleyball;
+
+        // Call On Launch Delegates
         OnLaunch(volleyball);
     }
 }

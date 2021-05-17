@@ -8,9 +8,14 @@ public class Ball : MonoBehaviour
 
     public Vector3 velBeforePhysicsUpdate { get; private set;} = Vector3.zero;
     public Vector3 estimatedLandingPos { get; private set; } = Vector3.zero;
+    private const float groundYPosition = -0.5f; // Todo: Not hard set this? need to just get the pos of the ground
     
     private int arcPoints = 50;
     private Vector3[] projectedPath;
+
+    // Debug Vars for testing
+    public BallLauncher launcher;
+    private bool toBeDestroyed = false;
     
     void Awake()
     {
@@ -34,7 +39,21 @@ public class Ball : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        else if (col.gameObject.layer ==  9  && !toBeDestroyed) // Check against ground layer
+        {
+            toBeDestroyed = true;
+            Invoke("DestroyAndRelaunch", 1f);
+        }
     }
+
+    void DestroyAndRelaunch()
+    {
+        launcher.InvokeLaunch(1f);
+        Destroy(this.gameObject);
+    }
+
+
     public void SetVelocity(Vector3 newVel)
     {
         rb.velocity = newVel;
@@ -56,7 +75,7 @@ public class Ball : MonoBehaviour
             Vector3 newPoint = new Vector3(x, y, z);
             projectedPath[i] = new Vector3(x, y, z);
 
-            if (i > 0 && projectedPath[i].y < 0 && projectedPath[i-1].y > 0)
+            if (i > 0 && projectedPath[i].y < groundYPosition && projectedPath[i-1].y > groundYPosition)
             {
                 estimatedLandingPos = projectedPath[i-1];
             }
@@ -74,7 +93,6 @@ public class Ball : MonoBehaviour
         {
             if (i > 0 && projectedPath[i].y < yOrigin && projectedPath[i-1].y > yOrigin)
             {
-                Debug.Log("YPoint found in: " + i + ", point is " + projectedPath[i-1]);
                 return projectedPath[i-1];
             }
         }   
