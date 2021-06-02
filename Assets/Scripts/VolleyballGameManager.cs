@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Team { RED, BLUE };
-
 
 public class VolleyballGameManager : MonoBehaviour
 {
@@ -34,6 +32,18 @@ public class VolleyballGameManager : MonoBehaviour
     {
         amountOfHits = 0;
         currentPossesion = (currentPossesion == Team.RED) ? Team.BLUE : Team.RED;
+    }
+
+    public void HandleInteraction(VolleyballPlayer player)
+    {
+        if (player.team != currentPossesion)
+        {
+            ChangePossesion();
+        }
+        
+        else {
+            amountOfHits += 1;
+        }
     }
 
     public Team FindTeamLandingZone()

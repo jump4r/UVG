@@ -22,6 +22,7 @@ public class Hand : MonoBehaviour
         InputDevices.GetDeviceAtXRNode(handInputDevice).TryGetFeatureValue(UnityEngine.XR.CommonUsages.deviceVelocity, out deviceVelocity);
     }
 
+    
     public void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.tag == "Ball")
@@ -33,6 +34,7 @@ public class Hand : MonoBehaviour
             Vector3 newBallVelocity = firstContactPoint.normal * deviceVelocity.magnitude * hitMultiplier;
             
             volleyball.SetVelocity(newBallVelocity * -1f);
+            volleyball.CalculatePath();
         }
     }
 

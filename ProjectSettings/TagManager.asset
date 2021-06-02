@@ -9,6 +9,8 @@ TagManager:
   - Pass
   - Destroyer
   - Gestures
+  - Ground
+  - BlueTeamManager
   layers:
   - Default
   - TransparentFX

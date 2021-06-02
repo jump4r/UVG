@@ -5,35 +5,46 @@ using UnityEngine;
 public class BotPass : MonoBehaviour
 {
     [SerializeField]
-    private Transform passTarget;
+    private Vector3 passTarget;
 
     [SerializeField]
     private float initialAngle;
-    
-    // Start is called before the first frame update
+
+    private BotPassTargets passTargets;
+
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        passTargets = GameObject.FindGameObjectWithTag("BlueTeamManager").GetComponentInChildren<BotPassTargets>();
     }
 
     void OnCollisionEnter(Collision col)
     {
-        Debug.Log("Collision Detected");
         if (col.gameObject.tag == "Ball")
         {
             PassBall(col.gameObject.GetComponent<Ball>());
         }
     }
 
+    void FindPassTarget()
+    {
+        int currentHit = VolleyballGameManager.instance.amountOfHits;
+
+        switch (currentHit)
+        {
+            case 0:
+                passTarget = passTargets.setTarget;
+        }
+    }
+
     void PassBall(Ball volleyball)
     {
-        Vector3 p = passTarget.position;
+        // Handle initial, Change possesion & add to hit count if needed
+        VolleyballGameManager.instance.HandleInteraction(GetComponent<BotPlayer>());
+
+        // Find the appropriate pass target
+        FindPassTarget();
+
+        Vector3 p = passTarget;
         float gravity = Physics.gravity.magnitude;
 
         // Firing angle in radians

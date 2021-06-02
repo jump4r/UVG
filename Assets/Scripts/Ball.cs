@@ -35,12 +35,10 @@ public class Ball : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.tag == "Destroyer")
-        {
-            Destroy(gameObject);
-        }
-
-        else if (col.gameObject.layer ==  9  && !toBeDestroyed) // Check against ground layer
+        if (
+            (col.gameObject.layer ==  9 || col.gameObject.tag == "Destroyer") &&
+            !toBeDestroyed
+        ) // Check against ground layer
         {
             toBeDestroyed = true;
             Invoke("DestroyAndRelaunch", 1f);

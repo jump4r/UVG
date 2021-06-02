@@ -22,7 +22,6 @@ public class BotMove : MonoBehaviour
 
     void Start()
     {
-        BallLauncher.OnLaunch += CalculateDestinationPoint;
         botPlayer = GetComponent<BotPlayer>();
         botHeight = GetComponent<CapsuleCollider>().height;
         botRadius = GetComponent<CapsuleCollider>().radius;
@@ -57,7 +56,7 @@ public class BotMove : MonoBehaviour
         verticalVelocity += Vector3.up * fallingSpeed * Time.fixedDeltaTime;
     }
 
-    void CalculateDestinationPoint(Ball volleyball)
+    public void CalculateAndMoveToDestinationPoint(Ball volleyball)
     {
         Team landingTeam = VolleyballGameManager.instance.FindTeamLandingZone();
         Debug.Log("Landing team: " + landingTeam);
@@ -69,7 +68,6 @@ public class BotMove : MonoBehaviour
         currentBall = volleyball;
         destinationPoint = currentBall.FindNearestYPointOnPath(transform.position.y);
     }
-
     bool CheckIfGrounded()
     {
         float rayLength = (botHeight / 2f) - botRadius + 0.01f;
