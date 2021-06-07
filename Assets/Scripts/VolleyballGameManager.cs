@@ -40,11 +40,9 @@ public class VolleyballGameManager : MonoBehaviour
         {
             ChangePossesion();
         }
-        
-        else {
-            amountOfHits += 1;
-        }
     }
+
+    public void IncrementHitAmount() { amountOfHits++; }
 
     public Team FindTeamLandingZone()
     {

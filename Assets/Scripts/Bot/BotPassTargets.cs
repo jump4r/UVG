@@ -8,6 +8,7 @@ public class BotPassTargets : MonoBehaviour
     public Dictionary<Role, Vector3> setTargets = new Dictionary<Role, Vector3>();
     public Dictionary<Role, Vector3> hitTargets = new Dictionary<Role, Vector3>();
     public Dictionary<Role, Vector3> defensePositions = new Dictionary<Role, Vector3>();
+    public Dictionary<Role, Vector3> hitPositions = new Dictionary<Role, Vector3>();
     public Vector3 passTarget = Vector3.zero;
     void Start()
     {
@@ -15,13 +16,13 @@ public class BotPassTargets : MonoBehaviour
 
         foreach (BallTarget target in targets)
         {
-            switch (target.type)
+            switch (target.targetType)
             {
-                case TargetType.Set:
+                case TargetType.Pass:
                     passTarget = target.transform.position;
                     break;
                 
-                case TargetType.Pass:
+                case TargetType.Set:
                     setTargets.Add(target.role, target.transform.position);
                     break;
                 
@@ -32,6 +33,11 @@ public class BotPassTargets : MonoBehaviour
                 default:
                     break;
             }
+        }
+
+        foreach (var kvp in setTargets)
+        {
+            Debug.Log("Set Targets: " + kvp.Key + " : " + kvp.Value);
         }
     }
 }

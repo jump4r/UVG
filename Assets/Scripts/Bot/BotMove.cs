@@ -9,6 +9,10 @@ public class BotMove : MonoBehaviour
     [SerializeField]
     private float moveSpeed;
     private Vector3 destinationPoint;
+    [SerializeField]
+    private float jumpForce;
+    private float maxJumpHeight;
+    private Rigidbody rb;
 
     // Gravity
     private float fallingSpeed = 0f;
@@ -25,19 +29,40 @@ public class BotMove : MonoBehaviour
         botPlayer = GetComponent<BotPlayer>();
         botHeight = GetComponent<CapsuleCollider>().height;
         botRadius = GetComponent<CapsuleCollider>().radius;
+        rb = GetComponent<Rigidbody>();
+        maxJumpHeight = GetMaxJumpHeight();
     }
 
     void Update()
     {
+        Vector3 yLockedDestination = Vector3.zero;
+
         if (destinationPoint != Vector3.zero)
         {
-            Vector3 yLockedDestination = new Vector3(destinationPoint.x, transform.position.y, destinationPoint.z);
+            yLockedDestination = new Vector3(destinationPoint.x, transform.position.y, destinationPoint.z);
             transform.position = Vector3.MoveTowards(transform.position, yLockedDestination, moveSpeed * Time.deltaTime);
         }
 
         // Gravity
         CalcualteGravityEffect();
         transform.position += (verticalVelocity * Time.fixedDeltaTime);
+    }
+
+    void Jump()
+    {
+        if (!CheckIfGrounded())
+        {
+            return;
+        }
+
+        Debug.Log("Add Velocity for jump");
+        rb.velocity = (Vector3.up * jumpForce);
+    }
+
+    private float GetMaxJumpHeight()
+    {
+        // Eq: hMax = V0^2 * sin(a)^2 / (2 * g), a = pi / 2, v0 = jumpForce, g = gravity
+        return Mathf.Pow(jumpForce, 2) / (2 * Physics.gravity.magnitude);
     }
 
     void CalcualteGravityEffect()
@@ -59,7 +84,7 @@ public class BotMove : MonoBehaviour
     public void CalculateAndMoveToDestinationPoint(Ball volleyball)
     {
         Team landingTeam = VolleyballGameManager.instance.FindTeamLandingZone();
-        Debug.Log("Landing team: " + landingTeam);
+
         if (landingTeam != botPlayer.team)
         {
             return;
@@ -68,6 +93,11 @@ public class BotMove : MonoBehaviour
         currentBall = volleyball;
         destinationPoint = currentBall.FindNearestYPointOnPath(transform.position.y);
     }
+
+    public void MoveToTarget(Vector3 target) {
+        destinationPoint = target;
+    }
+
     bool CheckIfGrounded()
     {
         float rayLength = (botHeight / 2f) - botRadius + 0.01f;

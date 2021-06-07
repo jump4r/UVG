@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 public class Hand : MonoBehaviour
 {
     public float hitMultiplier = 3f;
-    private float energyLost = .5f;
 
     [SerializeField]
     private XRNode handInputDevice;

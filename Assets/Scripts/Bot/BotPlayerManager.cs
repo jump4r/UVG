@@ -9,10 +9,17 @@ public class BotPlayerManager : MonoBehaviour
     private Team team;
     [SerializeField]
     private List<BotPlayer> players = new List<BotPlayer>();
+    private string lastTouch;
+    private BotPassTargets passTargets;
+    private BotDestinations destinations;
 
     void Start()
     {
-        BallLauncher.OnLaunch += FindClosestPlayerToLanding;
+        BallLauncher.OnLaunch += UpdatePlayersOnHit;
+        BotPass.OnBallHit += UpdatePlayersOnHit;
+
+        passTargets = GameObject.FindGameObjectWithTag("BlueTeamManager").GetComponentInChildren<BotPassTargets>();
+        destinations = GameObject.FindGameObjectWithTag("BlueTeamManager").GetComponentInChildren<BotDestinations>();
     }
 
 
@@ -24,13 +31,14 @@ public class BotPlayerManager : MonoBehaviour
         }
     }
 
-    public void FindClosestPlayerToLanding(Ball ball)
+    public void UpdatePlayersOnHit(Ball ball)
     {
         Team landingZoneTeam = VolleyballGameManager.instance.FindTeamLandingZone();
 
         float shortestDistance = Int64.MaxValue;
         BotPlayer playerToReceive = null;
         
+        // Find closest player to recieve ball
         foreach (BotPlayer p in players)
         {
             float distance = Vector3.Distance(p.transform.position, ball.estimatedLandingPos);
@@ -42,9 +50,45 @@ public class BotPlayerManager : MonoBehaviour
             }
         }
 
-        if (playerToReceive != null)
+        // Move other players to appropriate positions
+        foreach (BotPlayer p in players)
         {
-            playerToReceive.BotMove.CalculateAndMoveToDestinationPoint(ball);
+            if (p.name != playerToReceive.name)
+            {
+                MoveToNextPosition(p);
+            }
+
+            else
+            {
+                playerToReceive.BotMove.CalculateAndMoveToDestinationPoint(ball);
+            }
+        }
+    }
+
+    public void MoveToNextPosition(BotPlayer player)
+    {
+        int currentHit = VolleyballGameManager.instance.amountOfHits;
+        
+        switch (currentHit)
+        {
+            case 0:
+                break;
+
+            case 1:
+                try 
+                {
+                    player.BotMove.MoveToTarget(destinations.setPositions[player.role]);
+                }
+
+                catch
+                {
+                    Debug.Log("We probably dont have a player role set for this position");
+                }
+               
+                break;
+            
+            default:
+                break;
         }
     }
 }
