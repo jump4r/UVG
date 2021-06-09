@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PassType { 
+    Pass = 0,
+    Set = 1,
+    Hit = 2,
+}
 
 public class VolleyballGameManager : MonoBehaviour
 {
@@ -10,6 +15,8 @@ public class VolleyballGameManager : MonoBehaviour
     public Team currentPossesion;
     public int amountOfHits;
     public Ball currentBall;
+
+    public static float GROUND_OFFSET = 1.344f;
 
     public float centerPosition;
 

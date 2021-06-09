@@ -38,7 +38,7 @@ public class Ball : MonoBehaviour
         if (
             (col.gameObject.layer ==  9 || col.gameObject.tag == "Destroyer") &&
             !toBeDestroyed
-        ) // Check against ground layer
+        )
         {
             toBeDestroyed = true;
             Invoke("DestroyAndRelaunch", 1f);
@@ -98,4 +98,30 @@ public class Ball : MonoBehaviour
         return Vector3.zero;
     }
 
+    // This should be replaced with like actual math
+    public Vector3 FindNearestXPointOnPath(float xOrigin)
+    {
+        for (int i = 0; i < projectedPath.Length; i++)
+        {
+            if (i > 0 && projectedPath[i].x < xOrigin && projectedPath[i-1].x > xOrigin)
+            {
+                return projectedPath[i-1];
+            }
+        }   
+
+        return Vector3.zero;
+    }
+
+    public Vector3 GetJumpPoint(Vector3 hitPoint, float timeToMaxJumpHeight)
+    { 
+        Vector3 yLockedVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+        Vector3 jumpXZPoint = hitPoint - (yLockedVelocity * timeToMaxJumpHeight);
+
+        Debug.Log("Hit Point: " + hitPoint);
+        Debug.Log("Velocity Delta: " + (yLockedVelocity * timeToMaxJumpHeight));
+
+        // This is so bad omg, replace this with an anti-grav equation and we can get the
+        // Actual point we should jump at.
+        return FindNearestXPointOnPath(jumpXZPoint.x);
+    }
 }

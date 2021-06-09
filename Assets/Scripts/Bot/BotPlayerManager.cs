@@ -60,7 +60,7 @@ public class BotPlayerManager : MonoBehaviour
 
             else
             {
-                playerToReceive.BotMove.CalculateAndMoveToDestinationPoint(ball);
+                playerToReceive.BotMove.CalculateAndMoveToDestinationPoint(ball, VolleyballGameManager.instance.amountOfHits);
             }
         }
     }

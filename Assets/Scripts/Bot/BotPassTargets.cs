@@ -34,10 +34,5 @@ public class BotPassTargets : MonoBehaviour
                     break;
             }
         }
-
-        foreach (var kvp in setTargets)
-        {
-            Debug.Log("Set Targets: " + kvp.Key + " : " + kvp.Value);
-        }
     }
 }
