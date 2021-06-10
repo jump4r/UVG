@@ -20,7 +20,7 @@ public class BotMove : MonoBehaviour
     // When the ball is set to a bot, this is the position the ball will be when the bot will
     // jump to spike.
     private Vector3 jumpPoint = Vector3.zero;
-    private float jumpForce = 4f;
+    private float jumpForce = 5f;
     private float maxJumpHeight;
     private float timeToMaxJumpHeight;
     private Vector3 verticalVelocity = Vector3.zero;
@@ -40,7 +40,7 @@ public class BotMove : MonoBehaviour
         maxJumpHeight = GetMaxJumpHeight();
         timeToMaxJumpHeight = GetTimeToMaxJumpHeight();
 
-         Debug.Log("\nMax Jump height: " + maxJumpHeight + " Time To Max Jump: " + timeToMaxJumpHeight);
+        Debug.Log("Bot Height: " + botHeight);
     }
     
     private float GetMaxJumpHeight()
@@ -51,8 +51,8 @@ public class BotMove : MonoBehaviour
 
     private float GetTimeToMaxJumpHeight()
     {
-        // Eq: t = 2 * V0 / g
-        return 2 * jumpForce / Physics.gravity.magnitude;
+        // Eq: t = V0 / g
+        return jumpForce / Physics.gravity.magnitude;
     }
 
     void FixedUpdate()
@@ -61,9 +61,9 @@ public class BotMove : MonoBehaviour
 
         if (destinationPoint != Vector3.zero && !ArrivedAtDestination())
         {
-            Vector3 normalizedMovementVector = (destinationPoint - transform.position);
-            Vector3 direction = new Vector3(normalizedMovementVector.x, 0, normalizedMovementVector.z).normalized;
-            controller.Move(direction * Time.fixedDeltaTime * moveSpeed);
+            Vector3 movementVector = (destinationPoint - transform.position);
+            Vector3 normalizedDirection = new Vector3(movementVector.x, 0, movementVector.z).normalized;
+            controller.Move(normalizedDirection * Time.fixedDeltaTime * moveSpeed);
         }
 
         // -- Vertical Movements --
@@ -88,6 +88,16 @@ public class BotMove : MonoBehaviour
 
     void CalcualteGravityEffect()
     {
+        // Entire game is flat so this is probably fine
+        // Looks like The Gravity Calculations are being done async, sometimes the bot will have a vertical velocity but still be grounded
+        // If the bot has a vertical velocity, assume they are still mid jump, only calculate grounded state if they are falling or zero
+        if (verticalVelocity.y > 0)
+        {
+            fallingSpeed = Physics.gravity.y * Time.fixedDeltaTime;
+            verticalVelocity += Vector3.up * fallingSpeed;
+            return;
+        }
+
         if (CheckIfGrounded())
         {
             fallingSpeed = 0;
@@ -110,6 +120,7 @@ public class BotMove : MonoBehaviour
             return;
         }
         
+        Debug.Log("Jump Successful");
         verticalVelocity = Vector3.up * jumpForce;
     }
 
@@ -125,7 +136,7 @@ public class BotMove : MonoBehaviour
         // Move to spike spike point, set jump point
         if (currentHit == 2)
         {
-            destinationPoint = volleyball.FindNearestYPointOnPath(maxJumpHeight);
+            destinationPoint = volleyball.FindNearestYPointOnPath(maxJumpHeight + botHeight / 2);
             jumpPoint = volleyball.GetJumpPoint(destinationPoint, timeToMaxJumpHeight);
 
             Debug.Log("Jump Point: " + jumpPoint);
@@ -142,7 +153,7 @@ public class BotMove : MonoBehaviour
 
     bool CheckIfGrounded()
     {
-        float rayLength = (botHeight / 2f) - botRadius + 0.01f;
+        float rayLength = (controller.height / 2f) - controller.radius + 0.01f;
         bool hasHit = Physics.SphereCast(transform.position, botRadius, Vector3.down, out RaycastHit hitInfo, rayLength, groundLayer);
         return hasHit;
     }

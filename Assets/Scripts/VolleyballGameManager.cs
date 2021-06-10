@@ -15,6 +15,7 @@ public class VolleyballGameManager : MonoBehaviour
     public Team currentPossesion;
     public int amountOfHits;
     public Ball currentBall;
+    public Vector3 topOfNet; // Gotten from NetTop GameObject I guess
 
     public static float GROUND_OFFSET = 1.344f;
 

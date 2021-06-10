@@ -43,6 +43,8 @@ public class BotPass : MonoBehaviour
                 break;
             case 2:
                 // Hit!
+                HitBall(VolleyballGameManager.instance.currentBall);
+                newPassTarget = new Vector3(-1.5f, 0.5f, -0.75f);
                 break;
             default:
                 break;
@@ -95,6 +97,24 @@ public class BotPass : MonoBehaviour
     // Hit ball over net
     private void HitBall(Ball volleyball)
     {
+        float netAngle = AngleToNet(volleyball);
+    }
+
+    private float AngleToNet(Ball volleyball)
+    {
+        Vector3 netTopPos = VolleyballGameManager.instance.topOfNet;
         
+        Vector3 ballPos = volleyball.transform.position; 
+        Vector3 netComparePos = new Vector3(ballPos.x, netTopPos.y, netTopPos.z); // Top of the net at the ball's xPosition
+        Vector3 ballComparePos = new Vector3(ballPos.x, netTopPos.y, ballPos.z); // On top of net plane, at Ball's z position
+        
+        float hitAngle = Vector3.SignedAngle((ballComparePos - netComparePos), (ballPos - netComparePos), Vector3.right);
+
+        Debug.DrawLine(ballComparePos, netComparePos, Color.green, 3f);
+        Debug.DrawLine(ballPos, netComparePos, Color.cyan, 3f);
+
+        Debug.Log("Hit Angle: " + hitAngle);
+
+        return hitAngle;
     }
 }
