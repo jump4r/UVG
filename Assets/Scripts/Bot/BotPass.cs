@@ -28,40 +28,8 @@ public class BotPass : MonoBehaviour
         }
     }
 
-    private Vector3 FindPassTarget()
+    private Vector3 GetInitialHitVelocity(Ball volleyball)
     {
-        int currentHit = VolleyballGameManager.instance.amountOfHits;
-        Vector3 newPassTarget = Vector3.zero;
-
-        switch (currentHit)
-        {
-            case 0:
-                newPassTarget = passTargets.passTarget;
-                break;
-            case 1:
-                newPassTarget = passTargets.setTargets[Role.OUTSIDE];
-                break;
-            case 2:
-                // Hit!
-                HitBall(VolleyballGameManager.instance.currentBall);
-                newPassTarget = new Vector3(-1.5f, 0.5f, -0.75f);
-                break;
-            default:
-                break;
-        }
-
-        return newPassTarget;
-    }
-
-    // Pass or set ball to a teammate
-    private void PassBall(Ball volleyball)
-    {
-        // Find the appropriate pass target
-        passTarget = FindPassTarget();
-
-        // Handle initial, Change possesion & add to hit count if needed
-        VolleyballGameManager.instance.HandleInteraction(GetComponent<BotPlayer>());
-
         float gravity = Physics.gravity.magnitude;
 
         // Firing angle in radians
@@ -82,9 +50,49 @@ public class BotPass : MonoBehaviour
 
         // Rotate our velocity to match the direction between the two objects
         float angleBetweenObjects = Vector3.SignedAngle(Vector3.forward, planarTarget - planarPosition, Vector3.up);
-        Vector3 finalVelocity = Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocity;
+        
+        return Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocity;
+    }
 
-        volleyball.SetVelocity(finalVelocity);
+    private Vector3 FindPassTarget()
+    {
+        int currentHit = VolleyballGameManager.instance.amountOfHits;
+        Vector3 newPassTarget = Vector3.zero;
+
+        switch (currentHit)
+        {
+            case 0:
+                newPassTarget = passTargets.passTarget;
+                break;
+            case 1:
+                newPassTarget = passTargets.setTargets[Role.OUTSIDE];
+                break;
+            case 2:
+                // Choose a hit target
+                newPassTarget = passTargets.hitTargets[0];
+                break;
+            default:
+                break;
+        }
+
+        return newPassTarget;
+    }
+
+    // Pass or set ball to a teammate
+    private void PassBall(Ball volleyball)
+    {
+        // Find the appropriate pass target
+        passTarget = FindPassTarget();
+
+        // Set initial pass angle
+        initialAngle = GetInitialAngleFromHitType(volleyball);
+
+        // Handle initial, Change possesion & add to hit count if needed
+        VolleyballGameManager.instance.HandleInteraction(GetComponent<BotPlayer>());
+
+        Vector3 initialVelocity = GetInitialHitVelocity(volleyball);
+
+        volleyball.SetVelocity(initialVelocity);
         volleyball.CalculatePath();
 
         // Lastly, Add 1 to total hits to represent player touching the ball
@@ -94,10 +102,30 @@ public class BotPass : MonoBehaviour
         OnBallHit(volleyball);
     }
 
+    private float GetInitialAngleFromHitType(Ball volleyball)
+    {
+        int currentHit = VolleyballGameManager.instance.amountOfHits;
+        float angle = 65f;
+
+        if (currentHit == 2) 
+        {
+            float netAngle = AngleToNet(volleyball);
+            angle = netAngle < 0 ? netAngle + 20f : angle;
+        }
+
+        return angle;
+    }
+
     // Hit ball over net
     private void HitBall(Ball volleyball)
     {
         float netAngle = AngleToNet(volleyball);
+
+        // Find the appropriate pass target
+        passTarget = FindPassTarget();
+
+        // Set initial pass angle, spike if we're above the net, otherwise freeball
+        initialAngle = netAngle < 0 ? netAngle + 10f : 65f;
     }
 
     private float AngleToNet(Ball volleyball)
@@ -112,8 +140,6 @@ public class BotPass : MonoBehaviour
 
         Debug.DrawLine(ballComparePos, netComparePos, Color.green, 3f);
         Debug.DrawLine(ballPos, netComparePos, Color.cyan, 3f);
-
-        Debug.Log("Hit Angle: " + hitAngle);
 
         return hitAngle;
     }

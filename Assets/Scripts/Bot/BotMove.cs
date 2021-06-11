@@ -39,8 +39,6 @@ public class BotMove : MonoBehaviour
         controller = GetComponent<CharacterController>();
         maxJumpHeight = GetMaxJumpHeight();
         timeToMaxJumpHeight = GetTimeToMaxJumpHeight();
-
-        Debug.Log("Bot Height: " + botHeight);
     }
     
     private float GetMaxJumpHeight()
@@ -120,7 +118,6 @@ public class BotMove : MonoBehaviour
             return;
         }
         
-        Debug.Log("Jump Successful");
         verticalVelocity = Vector3.up * jumpForce;
     }
 
@@ -138,8 +135,6 @@ public class BotMove : MonoBehaviour
         {
             destinationPoint = volleyball.FindNearestYPointOnPath(maxJumpHeight + botHeight / 2);
             jumpPoint = volleyball.GetJumpPoint(destinationPoint, timeToMaxJumpHeight);
-
-            Debug.Log("Jump Point: " + jumpPoint);
         }
 
         else {
