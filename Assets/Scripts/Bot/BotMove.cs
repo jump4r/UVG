@@ -5,6 +5,7 @@ using UnityEngine;
 public class BotMove : MonoBehaviour
 {
     private BotPlayer botPlayer;
+    private BotDestinations destinations;
 
     // Movement
     [SerializeField]
@@ -39,6 +40,10 @@ public class BotMove : MonoBehaviour
         controller = GetComponent<CharacterController>();
         maxJumpHeight = GetMaxJumpHeight();
         timeToMaxJumpHeight = GetTimeToMaxJumpHeight();
+
+        destinations = GameObject.FindGameObjectWithTag("BlueTeamManager").GetComponentInChildren<BotDestinations>();
+        
+        Ball.OnOutOfPlay += MoveToServeRecieve;
     }
     
     private float GetMaxJumpHeight()
@@ -142,8 +147,14 @@ public class BotMove : MonoBehaviour
         }
     }
 
-    public void MoveToTarget(Vector3 target) {
+    public void MoveToTarget(Vector3 target)
+    {
         destinationPoint = target;
+    }
+
+    public void MoveToServeRecieve()
+    {
+        destinationPoint = destinations.GetServeReceivePosition(botPlayer.role);
     }
 
     bool CheckIfGrounded()

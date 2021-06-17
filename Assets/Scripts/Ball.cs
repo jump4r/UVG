@@ -17,6 +17,10 @@ public class Ball : MonoBehaviour
     // Debug Vars for testing
     public BallLauncher launcher;
     private bool toBeDestroyed = false;
+
+    // Out Of Play Delegate
+    public delegate void OutOfPlayAction();
+    public static OutOfPlayAction OnOutOfPlay;
     
     void Awake()
     {
@@ -43,6 +47,12 @@ public class Ball : MonoBehaviour
         {
             toBeDestroyed = true;
             Invoke("DestroyAndRelaunch", 1f);
+
+            // Remove when we actually start serving
+            if (launcher)
+            {
+                OnOutOfPlay();
+            }
         }
     }
 

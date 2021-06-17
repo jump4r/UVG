@@ -65,11 +65,11 @@ public class BotPass : MonoBehaviour
                 newPassTarget = passTargets.passTarget;
                 break;
             case 1:
-                newPassTarget = passTargets.setTargets[Role.OUTSIDE];
+                newPassTarget = passTargets.GetSetTargetFromAvailablePlayers();
                 break;
             case 2:
                 // Choose a hit target
-                newPassTarget = passTargets.hitTargets[0];
+                newPassTarget = passTargets.GetHitTarget();
                 break;
             default:
                 break;
