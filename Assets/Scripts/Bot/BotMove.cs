@@ -41,7 +41,7 @@ public class BotMove : MonoBehaviour
         maxJumpHeight = GetMaxJumpHeight();
         timeToMaxJumpHeight = GetTimeToMaxJumpHeight();
 
-        destinations = GameObject.FindGameObjectWithTag("BlueTeamManager").GetComponentInChildren<BotDestinations>();
+        destinations = GameObject.FindGameObjectWithTag(botPlayer.managerTag).GetComponentInChildren<BotDestinations>();
         
         Ball.OnOutOfPlay += MoveToServeRecieve;
     }

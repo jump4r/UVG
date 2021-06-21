@@ -14,8 +14,10 @@ public class Hand : MonoBehaviour
     [SerializeField]
     private InputActionProperty triggerAction;
 
-
     private Vector3 deviceVelocity;
+
+    public delegate void OnHitAction(Ball volleyball);
+    public static OnHitAction OnBallHit;
 
     void Update() {
         InputDevices.GetDeviceAtXRNode(handInputDevice).TryGetFeatureValue(UnityEngine.XR.CommonUsages.deviceVelocity, out deviceVelocity);
@@ -34,6 +36,8 @@ public class Hand : MonoBehaviour
             
             volleyball.SetVelocity(newBallVelocity * -1f);
             volleyball.CalculatePath();
+
+            OnBallHit(volleyball);
         }
     }
 

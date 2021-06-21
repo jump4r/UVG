@@ -8,27 +8,32 @@ public class BotPlayerManager : MonoBehaviour
     [SerializeField]
     private Team team;
     [SerializeField]
+    private string managerTag;
+    [SerializeField]
     private List<BotPlayer> players = new List<BotPlayer>();
     private string lastTouch;
     private BotPassTargets passTargets;
     private BotDestinations destinations;
 
+
     void Start()
     {
         BallLauncher.OnLaunch += UpdatePlayersOnHit;
-        BotPass.OnBallHit += UpdatePlayersOnHit;
 
-        passTargets = GameObject.FindGameObjectWithTag("BlueTeamManager").GetComponentInChildren<BotPassTargets>();
-        destinations = GameObject.FindGameObjectWithTag("BlueTeamManager").GetComponentInChildren<BotDestinations>();
+        // Listen for any hits from other bots or player
+        BotPass.OnBallHit += UpdatePlayersOnHit;
+        PassPlatform.OnBallHit += UpdatePlayersOnHit;
+        Hand.OnBallHit += UpdatePlayersOnHit;
+        PlayerSetter.OnBallSet += UpdatePlayersOnHit;
+
+        passTargets = GameObject.FindGameObjectWithTag(managerTag).GetComponentInChildren<BotPassTargets>();
+        destinations = GameObject.FindGameObjectWithTag(managerTag).GetComponentInChildren<BotDestinations>();
     }
 
 
-    public static void AddToTeam(BotPlayer player)
+    public void AddToTeam(BotPlayer player)
     {
-        if (player.team == Team.BLUE)
-        {
-            GameObject.FindGameObjectWithTag("BlueTeamManager").GetComponentInChildren<BotPlayerManager>().players.Add(player);
-        }
+        this.players.Add(player);
     }
 
     public void UpdatePlayersOnHit(Ball ball)
@@ -37,6 +42,16 @@ public class BotPlayerManager : MonoBehaviour
 
         float shortestDistance = Int64.MaxValue;
         BotPlayer playerToReceive = null;
+
+        if (team != landingZoneTeam)
+        {
+            foreach (BotPlayer p in players)
+            {
+                MoveToRecieve(p);
+            }
+
+            return;
+        }
         
         // Find closest player to recieve ball
         foreach (BotPlayer p in players)
@@ -65,7 +80,12 @@ public class BotPlayerManager : MonoBehaviour
         }
     }
 
-    public void MoveToNextPosition(BotPlayer player)
+    private void MoveToRecieve(BotPlayer player)
+    {
+        player.BotMove.MoveToTarget(destinations.serveRecievePositions[player.role]);
+    }
+
+    private void MoveToNextPosition(BotPlayer player)
     {
         int currentHit = VolleyballGameManager.instance.amountOfHits;
         

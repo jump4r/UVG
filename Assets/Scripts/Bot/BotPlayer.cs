@@ -5,9 +5,16 @@ using UnityEngine;
 public class BotPlayer : VolleyballPlayer
 {
     public BotMove BotMove;
+    public string managerTag;
+
+    void Awake()
+    {
+        managerTag = team == Team.BLUE ? "BlueTeamManager" : "RedTeamManager";
+    }
+
     void Start()
     {
-        BotPlayerManager.AddToTeam(this);
+        GameObject.FindGameObjectWithTag(managerTag).GetComponentInChildren<BotPlayerManager>().AddToTeam(this);
         BotMove = GetComponent<BotMove>();
     }
 }

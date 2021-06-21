@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BotPass : MonoBehaviour
 {
+    private BotPlayer botPlayer;
     [SerializeField]
     private Vector3 passTarget;
 
@@ -17,7 +18,8 @@ public class BotPass : MonoBehaviour
 
     void Start()
     {
-        passTargets = GameObject.FindGameObjectWithTag("BlueTeamManager").GetComponentInChildren<BotPassTargets>();
+        botPlayer = GetComponent<BotPlayer>();
+        passTargets = GameObject.FindGameObjectWithTag(botPlayer.managerTag).GetComponentInChildren<BotPassTargets>();
     }
 
     void OnCollisionEnter(Collision col)
@@ -59,6 +61,11 @@ public class BotPass : MonoBehaviour
         int currentHit = VolleyballGameManager.instance.amountOfHits;
         Vector3 newPassTarget = Vector3.zero;
 
+        if (botPlayer.team == Team.RED) 
+        {
+            Debug.Log("Current Hit: " + currentHit);
+        }
+
         switch (currentHit)
         {
             case 0:
@@ -81,14 +88,14 @@ public class BotPass : MonoBehaviour
     // Pass or set ball to a teammate
     private void PassBall(Ball volleyball)
     {
+        // Handle initial, Change possesion & add to hit count if needed
+        VolleyballGameManager.instance.HandleInteraction(GetComponent<BotPlayer>());
+
         // Find the appropriate pass target
         passTarget = FindPassTarget();
 
         // Set initial pass angle
         initialAngle = GetInitialAngleFromHitType(volleyball);
-
-        // Handle initial, Change possesion & add to hit count if needed
-        VolleyballGameManager.instance.HandleInteraction(GetComponent<BotPlayer>());
 
         Vector3 initialVelocity = GetInitialHitVelocity(volleyball);
 

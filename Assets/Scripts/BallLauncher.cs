@@ -36,7 +36,7 @@ public class BallLauncher : MonoBehaviour
 
         // Update Vball Game Manager State
         VolleyballGameManager.instance.amountOfHits = 0;
-        VolleyballGameManager.instance.currentPossesion = Team.BLUE;
+        VolleyballGameManager.instance.currentPossesion = Team.RED;
         VolleyballGameManager.instance.currentBall = volleyball;
 
         // Call On Launch Delegates

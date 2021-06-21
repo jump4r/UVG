@@ -13,10 +13,16 @@ public class PlayerSetter : MonoBehaviour
     private GameObject player;
     private HandGestures handGestures;
     private float setSpeedMultiplier = 2.5f;
+
+    private VolleyballPlayer vp;
+
+    public delegate void OnSetAction(Ball volleyball);
+    public static OnSetAction OnBallSet;
     void Start()
     {
         handGestures = GameObject.FindGameObjectWithTag("Gestures").GetComponent<HandGestures>();
         player = GameObject.FindGameObjectWithTag("Player");
+        vp = player.GetComponent<VolleyballPlayer>();
     }
 
     // Update is called once per frame
@@ -47,6 +53,12 @@ public class PlayerSetter : MonoBehaviour
                 Vector3 newBallVel = player.transform.rotation * (((leftHand.GetHandVelocity() + rightHand.GetHandVelocity()) / 2f) * setSpeedMultiplier);
                 ballRb.velocity = newBallVel;
 
+                // Update Game State
+                VolleyballGameManager.instance.HandleInteraction(vp);
+                VolleyballGameManager.instance.IncrementHitAmount();
+                
+                // Call bot listeners to bot set
+                OnBallSet(volleyball);
 
                 volleyball = null;
                 GetComponent<SphereCollider>().enabled = false;

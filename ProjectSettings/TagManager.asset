@@ -11,6 +11,7 @@ TagManager:
   - Gestures
   - Ground
   - BlueTeamManager
+  - RedTeamManager
   layers:
   - Default
   - TransparentFX

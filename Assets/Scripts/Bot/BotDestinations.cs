@@ -27,18 +27,6 @@ public class BotDestinations : MonoBehaviour
                     break;
             }
         }
-
-        Debug.Log("Is this running?");
-
-        foreach (var item in serveRecievePositions)
-        {
-            Debug.Log("Serve Receive Target: " + item.Key + " : " + item.Value);
-        }
-
-        foreach (var item in setPositions)
-        {
-            Debug.Log("Set Target: " + item.Key + " : " + item.Value);
-        }
     }
 
     public Vector3 GetServeReceivePosition(Role role)

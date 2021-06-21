@@ -17,9 +17,15 @@ public class PassPlatform : MonoBehaviour
 
     private float energyLost = 0.75f;
 
+    public delegate void OnHitAction(Ball volleyball);
+    public static OnHitAction OnBallHit;
+    
+    private VolleyballPlayer vp;
+
     void Start()
     {
-       platform = GetComponent<BoxCollider>(); 
+       platform = GetComponent<BoxCollider>();
+       vp = GameObject.FindGameObjectWithTag("Player").GetComponent<VolleyballPlayer>();
     }
 
     void OnCollisionEnter(Collision col)
@@ -34,6 +40,15 @@ public class PassPlatform : MonoBehaviour
             Vector3 newBallVelocity = (newBallDirection * energyLost * volleyball.velBeforePhysicsUpdate.magnitude * platformMovementMultiplication());
 
             volleyball.SetVelocity(newBallVelocity);
+
+            Debug.Log("Ball passed by player, call it up");
+
+            // Update Game State
+            VolleyballGameManager.instance.HandleInteraction(vp);
+            VolleyballGameManager.instance.IncrementHitAmount();
+            
+            // Call Bot Listeners
+            OnBallHit(volleyball);
         }
     }
 
