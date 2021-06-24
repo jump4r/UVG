@@ -51,7 +51,9 @@ public class PlayerSetter : MonoBehaviour
                 ballRb.useGravity = true;
 
                 Vector3 newBallVel = player.transform.rotation * (((leftHand.GetHandVelocity() + rightHand.GetHandVelocity()) / 2f) * setSpeedMultiplier);
-                ballRb.velocity = newBallVel;
+                
+                volleyball.SetVelocity(newBallVel);
+                volleyball.CalculatePath();
 
                 // Update Game State
                 VolleyballGameManager.instance.HandleInteraction(vp);

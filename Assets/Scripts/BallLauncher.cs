@@ -12,6 +12,8 @@ public class BallLauncher : MonoBehaviour
     
     [SerializeField]
     private float launchFrequency = 5f;
+    [SerializeField]
+    private Team startingTeam;
     void Start()
     {
         InvokeLaunch(launchFrequency);
@@ -36,7 +38,7 @@ public class BallLauncher : MonoBehaviour
 
         // Update Vball Game Manager State
         VolleyballGameManager.instance.amountOfHits = 0;
-        VolleyballGameManager.instance.currentPossesion = Team.RED;
+        VolleyballGameManager.instance.currentPossesion = startingTeam;
         VolleyballGameManager.instance.currentBall = volleyball;
 
         // Call On Launch Delegates

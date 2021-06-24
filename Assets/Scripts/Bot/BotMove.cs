@@ -164,8 +164,19 @@ public class BotMove : MonoBehaviour
         return hasHit;
     }
 
+    public Vector3 GetDestinationPoint()
+    {
+        return destinationPoint;
+    }
+
     private bool ArrivedAtDestination()
     {
-        return Vector3.Distance(transform.position, destinationPoint) < 0.2f;
+        if (Vector3.Distance(transform.position, destinationPoint) < 0.1f)
+        {
+            destinationPoint = Vector3.zero;
+            return true;
+        }
+
+        return false;
     }
 }

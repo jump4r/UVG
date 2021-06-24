@@ -16,6 +16,8 @@ public class PassPlatform : MonoBehaviour
     private HandGestures handGestures;
 
     private float energyLost = 0.75f;
+    private bool readyToPass = true;
+    private const float PASS_TIMEOUT = 0.1f;
 
     public delegate void OnHitAction(Ball volleyball);
     public static OnHitAction OnBallHit;
@@ -32,24 +34,38 @@ public class PassPlatform : MonoBehaviour
     {
         if (col.gameObject.tag == "Ball")
         {
-            Ball volleyball = col.gameObject.GetComponent<Ball>();
+            if (readyToPass)
+            {
+                Ball volleyball = col.gameObject.GetComponent<Ball>();
             
-            ContactPoint firstContactPoint = col.contacts[0];
-            // Vector3 newBallDirection = ((firstContactPoint.normal * -1f) + Vector3.up).normalized;
-            Vector3 newBallDirection = (firstContactPoint.normal * -1f).normalized;
-            Vector3 newBallVelocity = (newBallDirection * energyLost * volleyball.velBeforePhysicsUpdate.magnitude * platformMovementMultiplication());
+                ContactPoint firstContactPoint = col.contacts[0];
+                // Vector3 newBallDirection = ((firstContactPoint.normal * -1f) + Vector3.up).normalized;
+                Vector3 newBallDirection = (firstContactPoint.normal * -1f).normalized;
+                Vector3 newBallVelocity = (newBallDirection * energyLost * volleyball.velBeforePhysicsUpdate.magnitude * platformMovementMultiplication());
 
-            volleyball.SetVelocity(newBallVelocity);
+                volleyball.SetVelocity(newBallVelocity);
+                volleyball.CalculatePath();
 
-            Debug.Log("Ball passed by player, call it up");
+                Debug.Log("Ball passed by player, call it up");
 
-            // Update Game State
-            VolleyballGameManager.instance.HandleInteraction(vp);
-            VolleyballGameManager.instance.IncrementHitAmount();
+                // Update Game State
+                VolleyballGameManager.instance.HandleInteraction(vp);
+                VolleyballGameManager.instance.IncrementHitAmount();
+
+
+                // Call Bot Listeners
+                OnBallHit(volleyball);
+
+                readyToPass = false;
+                Invoke("SetReadyToPass", PASS_TIMEOUT);
+            }
             
-            // Call Bot Listeners
-            OnBallHit(volleyball);
         }
+    }
+
+    private void SetReadyToPass()
+    {
+        readyToPass = true;
     }
 
     void Update()

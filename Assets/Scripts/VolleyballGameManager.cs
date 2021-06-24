@@ -42,12 +42,15 @@ public class VolleyballGameManager : MonoBehaviour
         currentPossesion = (currentPossesion == Team.RED) ? Team.BLUE : Team.RED;
     }
 
-    public void HandleInteraction(VolleyballPlayer player)
+    public bool HandleInteraction(VolleyballPlayer player)
     {
         if (player.team != currentPossesion)
         {
             ChangePossesion();
+            return true;
         }
+
+        return false;
     }
 
     public void IncrementHitAmount() { amountOfHits++; }

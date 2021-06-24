@@ -5,6 +5,8 @@ using UnityEngine;
 public class BotPass : MonoBehaviour
 {
     private BotPlayer botPlayer;
+    private bool readyToPass = true;
+    private const float PASS_TIMEOUT = 0.1f;
     [SerializeField]
     private Vector3 passTarget;
 
@@ -26,8 +28,18 @@ public class BotPass : MonoBehaviour
     {
         if (col.gameObject.tag == "Ball")
         {
-            PassBall(col.gameObject.GetComponent<Ball>());
+            if (readyToPass)
+            {
+                PassBall(col.gameObject.GetComponent<Ball>());
+                readyToPass = false;
+                Invoke("SetReadyToPass", PASS_TIMEOUT);
+            }
         }
+    }
+
+    void SetReadyToPass()
+    {
+        readyToPass = true;
     }
 
     private Vector3 GetInitialHitVelocity(Ball volleyball)
@@ -60,11 +72,6 @@ public class BotPass : MonoBehaviour
     {
         int currentHit = VolleyballGameManager.instance.amountOfHits;
         Vector3 newPassTarget = Vector3.zero;
-
-        if (botPlayer.team == Team.RED) 
-        {
-            Debug.Log("Current Hit: " + currentHit);
-        }
 
         switch (currentHit)
         {
@@ -147,6 +154,8 @@ public class BotPass : MonoBehaviour
 
         Debug.DrawLine(ballComparePos, netComparePos, Color.green, 3f);
         Debug.DrawLine(ballPos, netComparePos, Color.cyan, 3f);
+
+        hitAngle = botPlayer.team == Team.RED ? hitAngle * -1 : hitAngle;
 
         return hitAngle;
     }
