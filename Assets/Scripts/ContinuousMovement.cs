@@ -34,6 +34,7 @@ public class ContinuousMovement : MonoBehaviour
     {
         character = GetComponent<CharacterController>();   
         rig = GetComponent<XRRig>();
+        Debug.Log("Game Object: " + gameObject);
     }
 
     // Update is called once per frame

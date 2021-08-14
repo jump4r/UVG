@@ -23,6 +23,35 @@ public class PlayerSetter : MonoBehaviour
         handGestures = GameObject.FindGameObjectWithTag("Gestures").GetComponent<HandGestures>();
         player = GameObject.FindGameObjectWithTag("Player");
         vp = player.GetComponent<VolleyballPlayer>();
+
+        HandGestures.OnGestureChanged += CheckRemoveSetGesture;
+    }
+
+    private void CheckRemoveSetGesture(HandGesture formerGesture, HandGesture currentGesture)
+    {
+        if (formerGesture == HandGesture.Set && volleyball != null) 
+        {
+            rightHand.ResetHandCollider();
+            leftHand.ResetHandCollider();
+
+            Rigidbody ballRb = volleyball.GetComponent<Rigidbody>();
+            ballRb.useGravity = true;
+
+            Vector3 newBallVel = player.transform.rotation * (((leftHand.GetHandVelocity() + rightHand.GetHandVelocity()) / 2f) * setSpeedMultiplier);
+            
+            volleyball.SetVelocity(newBallVel);
+            volleyball.CalculatePath();
+
+            // Update Game State
+            VolleyballGameManager.instance.HandleInteraction(vp);
+            VolleyballGameManager.instance.IncrementHitAmount();
+            
+            // Call bot listeners to bot set
+            OnBallSet(volleyball);
+
+            volleyball = null;
+            GetComponent<SphereCollider>().enabled = false;
+        }
     }
 
     // Update is called once per frame
@@ -39,34 +68,7 @@ public class PlayerSetter : MonoBehaviour
 
                 volleyball.transform.position = GetCenter();
             }
-        }
-    
-        else {
-            if (volleyball != null)
-            {
-                rightHand.ResetHandCollider();
-                leftHand.ResetHandCollider();
-
-                Rigidbody ballRb = volleyball.GetComponent<Rigidbody>();
-                ballRb.useGravity = true;
-
-                Vector3 newBallVel = player.transform.rotation * (((leftHand.GetHandVelocity() + rightHand.GetHandVelocity()) / 2f) * setSpeedMultiplier);
-                
-                volleyball.SetVelocity(newBallVel);
-                volleyball.CalculatePath();
-
-                // Update Game State
-                VolleyballGameManager.instance.HandleInteraction(vp);
-                VolleyballGameManager.instance.IncrementHitAmount();
-                
-                // Call bot listeners to bot set
-                OnBallSet(volleyball);
-
-                volleyball = null;
-                GetComponent<SphereCollider>().enabled = false;
-            }
-        }
-        
+        }        
     }
 
     void OnTriggerEnter(Collider collider)

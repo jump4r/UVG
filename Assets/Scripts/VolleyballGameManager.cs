@@ -18,8 +18,9 @@ public class VolleyballGameManager : MonoBehaviour
     public Vector3 topOfNet; // Gotten from NetTop GameObject I guess
 
     public static float GROUND_OFFSET = 1.344f;
+    private float BOT_PASS_Y_OFFSET = 0.6f;
 
-    public float centerPosition;
+    private float centerPosition = 0f;
 
     void Start()
     {
@@ -32,8 +33,6 @@ public class VolleyballGameManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-
-        centerPosition = GameObject.FindGameObjectWithTag("Ground").transform.position.z; 
     }
 
     public void ChangePossesion()
@@ -57,6 +56,6 @@ public class VolleyballGameManager : MonoBehaviour
 
     public Team FindTeamLandingZone()
     {
-        return (currentBall.estimatedLandingPos.z > centerPosition) ? Team.BLUE : Team.RED;
+        return (currentBall.GetPointFromYPos(BOT_PASS_Y_OFFSET).z > centerPosition) ? Team.BLUE : Team.RED;
     }
 }

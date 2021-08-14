@@ -64,6 +64,7 @@ public class PlayerJump : MonoBehaviour
     bool CheckIfGrounded()
     {
         Vector3 rayStart = transform.TransformPoint(character.center);
+
         float rayLength = character.center.y + 0.01f;
         bool hasHit = Physics.SphereCast(rayStart, character.radius, Vector3.down, out RaycastHit hitInfo, rayLength, groundLayer);
         return hasHit;

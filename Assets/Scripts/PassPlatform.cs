@@ -28,6 +28,7 @@ public class PassPlatform : MonoBehaviour
     {
        platform = GetComponent<BoxCollider>();
        vp = GameObject.FindGameObjectWithTag("Player").GetComponent<VolleyballPlayer>();
+       HandGestures.OnGestureChanged += OnGestureChanged;
     }
 
     void OnCollisionEnter(Collision col)
@@ -59,7 +60,21 @@ public class PassPlatform : MonoBehaviour
                 readyToPass = false;
                 Invoke("SetReadyToPass", PASS_TIMEOUT);
             }
-            
+        }
+    }
+
+    private void OnGestureChanged(HandGesture formerGesture, HandGesture currentGesture)
+    {
+        if (currentGesture == HandGesture.Pass)
+        {
+            platform.enabled = true;
+            DisableHandColliders();
+        }
+
+        else if (formerGesture == HandGesture.Pass)
+        {
+            platform.enabled = false;
+            EnableHandColliders();
         }
     }
 
@@ -71,18 +86,6 @@ public class PassPlatform : MonoBehaviour
     void Update()
     {
         transform.position = new Vector3(headTransform.position.x, headTransform.position.y - 0.3f, headTransform.position.z);
-        
-        if (handGestures.currentGesture == HandGesture.Pass)
-        {
-            platform.enabled = true;
-            // DisableHandColliders();
-        }
-
-        else
-        {
-            platform.enabled = false;
-            // EnableHandColliders();
-        }
 
         if (platform.enabled)
         {

@@ -133,6 +133,30 @@ public class Ball : MonoBehaviour
         return times;
     }
 
+    public Vector3 GetPointFromYPos(float yPos)
+    {
+        List<float> hitTimes = GetTimeToYPosition(yPos);
+        float t = 0;
+        
+        switch (hitTimes.Count)
+        {
+            case 0:
+                return Vector3.zero;
+            case 1:
+                t = hitTimes[0];
+                break;
+            case 2:
+                t = Mathf.Max(hitTimes[0], hitTimes[1]);
+                break;
+        }
+
+        float y = (-0.5f * Physics.gravity.magnitude * Mathf.Pow(t, 2)) + (initialYVelocity * t) + initialPos.y;
+        float x = rb.velocity.x * t + initialPos.x;
+        float z = rb.velocity.z * t + initialPos.z;
+
+        return new Vector3(x, y, z);
+    }
+
     public Vector3 GetJumpPoint(Vector3 hitPoint, float timeToMaxJumpHeight)
     {
         // Get Time From Start to Hit Point

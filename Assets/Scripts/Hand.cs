@@ -18,6 +18,12 @@ public class Hand : MonoBehaviour
 
     public delegate void OnHitAction(Ball volleyball);
     public static OnHitAction OnBallHit;
+    private VolleyballPlayer vp;
+
+    void Start()
+    {
+        vp = GetComponentInParent<VolleyballPlayer>();
+    }
 
     void Update() {
         InputDevices.GetDeviceAtXRNode(handInputDevice).TryGetFeatureValue(UnityEngine.XR.CommonUsages.deviceVelocity, out deviceVelocity);
@@ -36,6 +42,10 @@ public class Hand : MonoBehaviour
             
             volleyball.SetVelocity(newBallVelocity * -1f);
             volleyball.CalculatePath();
+
+            // Update Game State
+            VolleyballGameManager.instance.HandleInteraction(vp);
+            VolleyballGameManager.instance.IncrementHitAmount();
 
             OnBallHit(volleyball);
         }

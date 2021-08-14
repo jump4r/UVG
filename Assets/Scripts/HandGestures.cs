@@ -16,6 +16,8 @@ public class HandGestures : MonoBehaviour
 
     public HandGesture currentGesture { get; private set; }
     private float handDistanceThreshold = 0.2f;
+    public delegate void OnGestureAction(HandGesture formerGesture, HandGesture currentGesture);
+    public static OnGestureAction OnGestureChanged;
 
     void Start()
     {
@@ -32,17 +34,27 @@ public class HandGestures : MonoBehaviour
             // CheckHandsAboveHead()
         )
         {
-
-            currentGesture = HandGesture.Set;
+            TryUpdateHandGesture(HandGesture.Set);
         }
 
         else if (CheckHandDistanceThreshold())
         {
-            currentGesture = HandGesture.Pass;
+            TryUpdateHandGesture(HandGesture.Pass);
         }
 
         else {
-            currentGesture = HandGesture.None;
+            TryUpdateHandGesture(HandGesture.None);
+        }
+    }
+
+    private void TryUpdateHandGesture(HandGesture gesture)
+    {
+        if (currentGesture != gesture)
+        {
+            HandGesture formerGesture = currentGesture;
+            currentGesture = gesture;
+            Debug.Log("On Gesture Change");
+            OnGestureChanged(formerGesture, currentGesture);
         }
     }
 
