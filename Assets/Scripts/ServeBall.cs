@@ -54,6 +54,9 @@ public class ServeBall : XRGrabInteractable
     {
         GameObject b = Instantiate(Ball, transform.position, transform.rotation);
         b.GetComponent<Rigidbody>().velocity = rb.velocity;
+        
+        Ball volleyball = b.GetComponent<Ball>();
+        ServerManager.instance.InitializeServeBall(volleyball);
         Destroy(gameObject);
     }
 }

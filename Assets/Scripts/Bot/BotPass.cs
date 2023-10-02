@@ -73,6 +73,8 @@ public class BotPass : MonoBehaviour
         int currentHit = VolleyballGameManager.instance.amountOfHits;
         Vector3 newPassTarget = Vector3.zero;
 
+        // Debug.Log("Curent Hit Amount: " + currentHit);
+
         switch (currentHit)
         {
             case 0:
@@ -83,7 +85,7 @@ public class BotPass : MonoBehaviour
                 break;
             case 2:
                 // Choose a hit target
-                newPassTarget = passTargets.GetHitTarget();
+                newPassTarget = passTargets.GetHitTarget() + VectorUtils.NoiseVector(0.5f);
                 break;
             default:
                 break;

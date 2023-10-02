@@ -53,7 +53,6 @@ public class HandGestures : MonoBehaviour
         {
             HandGesture formerGesture = currentGesture;
             currentGesture = gesture;
-            Debug.Log("On Gesture Change");
             OnGestureChanged(formerGesture, currentGesture);
         }
     }

@@ -25,6 +25,7 @@ public class BotMove : MonoBehaviour
     private float maxJumpHeight;
     private float timeToMaxJumpHeight;
     private Vector3 verticalVelocity = Vector3.zero;
+    
 
     private float botHeight;
     private float botRadius;
@@ -34,8 +35,8 @@ public class BotMove : MonoBehaviour
     void Start()
     {
         botPlayer = GetComponent<BotPlayer>();
-        botHeight = GetComponent<CapsuleCollider>().height;
-        botRadius = GetComponent<CapsuleCollider>().radius;
+        botHeight = GetComponent<CharacterController>().height;
+        botRadius = GetComponent<CharacterController>().radius;
         rb = GetComponent<Rigidbody>();
         controller = GetComponent<CharacterController>();
         maxJumpHeight = GetMaxJumpHeight();
@@ -60,8 +61,6 @@ public class BotMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 yLockedDestination = Vector3.zero;
-
         if (destinationPoint != Vector3.zero && !ArrivedAtDestination())
         {
             Vector3 movementVector = (destinationPoint - transform.position);
@@ -150,11 +149,13 @@ public class BotMove : MonoBehaviour
     public void MoveToTarget(Vector3 target)
     {
         destinationPoint = target;
+        destinationPoint.y = botHeight / 2f;
     }
 
     public void MoveToServeRecieve()
     {
         destinationPoint = destinations.GetServeReceivePosition(botPlayer.role);
+        destinationPoint.y = botHeight / 2f;
     }
 
     bool CheckIfGrounded()
@@ -164,19 +165,22 @@ public class BotMove : MonoBehaviour
         return hasHit;
     }
 
-    public Vector3 GetDestinationPoint()
-    {
-        return destinationPoint;
-    }
-
     private bool ArrivedAtDestination()
     {
-        if (Vector3.Distance(transform.position, destinationPoint) < 0.1f)
+        float distanceFromDestination = Vector3.Distance(transform.position, destinationPoint);
+
+        if (gameObject.name == "Bot Player (1)")
         {
+            Debug.Log("Distance from Destination: " + distanceFromDestination);
+        }
+        
+        if (Vector3.Distance(transform.position, destinationPoint) < 0.5f)
+        {
+            transform.position = destinationPoint;
             destinationPoint = Vector3.zero;
             return true;
         }
-
+        
         return false;
     }
 }

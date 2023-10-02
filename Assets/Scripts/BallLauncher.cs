@@ -5,10 +5,13 @@ using UnityEngine;
 public class BallLauncher : MonoBehaviour
 {
     public delegate void LaunchAction(Ball volleyball);
-    public static event LaunchAction OnLaunch;
+    public static event LaunchAction OnServe;
     public GameObject ballPrefab;
     [SerializeField]
     private float launchSpeed = 10f;
+
+    [SerializeField]
+    private float launchNoise = 0.5f;
     
     [SerializeField]
     private float launchFrequency = 5f;
@@ -30,7 +33,10 @@ public class BallLauncher : MonoBehaviour
         GameObject instance = Instantiate(ballPrefab, transform.position, Quaternion.identity);
         Ball volleyball = instance.GetComponent<Ball>();
         Rigidbody rb = instance.GetComponent<Rigidbody>();
-        rb.velocity = transform.rotation * Vector3.forward * launchSpeed;
+
+        Vector3 noiseVector = VectorUtils.NoiseVector(launchNoise);
+        
+        rb.velocity = (transform.rotation * Vector3.forward * launchSpeed) + noiseVector;
 
         // Trigger Launch Event, Calcualte Trajectory beforehand since we need to do it this frame 
         volleyball.CalculatePath();
@@ -42,6 +48,6 @@ public class BallLauncher : MonoBehaviour
         VolleyballGameManager.instance.currentBall = volleyball;
 
         // Call On Launch Delegates
-        OnLaunch(volleyball);
+        // OnServe(volleyball);
     }
 }

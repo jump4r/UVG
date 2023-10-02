@@ -15,7 +15,7 @@ public class PassPlatform : MonoBehaviour
     [SerializeField]
     private HandGestures handGestures;
 
-    private float energyLost = 0.75f;
+    private float energyLost = 0.58f;
     private bool readyToPass = true;
     private const float PASS_TIMEOUT = 0.1f;
 
@@ -33,33 +33,30 @@ public class PassPlatform : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.tag == "Ball")
+        if (col.gameObject.tag == "Ball" && readyToPass)
         {
-            if (readyToPass)
-            {
-                Ball volleyball = col.gameObject.GetComponent<Ball>();
-            
-                ContactPoint firstContactPoint = col.contacts[0];
-                // Vector3 newBallDirection = ((firstContactPoint.normal * -1f) + Vector3.up).normalized;
-                Vector3 newBallDirection = (firstContactPoint.normal * -1f).normalized;
-                Vector3 newBallVelocity = (newBallDirection * energyLost * volleyball.velBeforePhysicsUpdate.magnitude * platformMovementMultiplication());
 
-                volleyball.SetVelocity(newBallVelocity);
-                volleyball.CalculatePath();
+            Ball volleyball = col.gameObject.GetComponent<Ball>();
+        
+            ContactPoint firstContactPoint = col.contacts[0];
+            // Vector3 newBallDirection = ((firstContactPoint.normal * -1f) + Vector3.up).normalized;
+            Vector3 newBallDirection = (firstContactPoint.normal * -1f).normalized;
+            Vector3 newBallVelocity = (newBallDirection * energyLost * volleyball.velBeforePhysicsUpdate.magnitude * PlatformMovementMultiplication());
 
-                Debug.Log("Ball passed by player, call it up");
+            volleyball.SetVelocity(newBallVelocity);
+            volleyball.CalculatePath();
 
-                // Update Game State
-                VolleyballGameManager.instance.HandleInteraction(vp);
-                VolleyballGameManager.instance.IncrementHitAmount();
+            Debug.Log("Ball passed by player, call it up");
 
+            // Update Game State
+            VolleyballGameManager.instance.HandleInteraction(vp);
+            VolleyballGameManager.instance.IncrementHitAmount();
 
-                // Call Bot Listeners
-                OnBallHit(volleyball);
+            // Call Bot Listeners
+            OnBallHit(volleyball);
 
-                readyToPass = false;
-                Invoke("SetReadyToPass", PASS_TIMEOUT);
-            }
+            readyToPass = false;
+            Invoke("SetReadyToPass", PASS_TIMEOUT);
         }
     }
 
@@ -89,47 +86,16 @@ public class PassPlatform : MonoBehaviour
 
         if (platform.enabled)
         {
-           setPlatformAngle();
+            transform.rotation = PlatformVectorUtils.PlatformAngle(leftHandTransform, rightHandTransform, rigTransform, transform);
         }
     }
 
-    private void setPlatformAngle()
-    {
-         // X Position & Angle
-            Vector3 averageHandPosition = new Vector3(
-                (rightHandTransform.position.x + leftHandTransform.position.x) / 2f,
-                (rightHandTransform.position.y + leftHandTransform.position.y) / 2f,
-                (rightHandTransform.position.z + leftHandTransform.position.z) / 2f
-            );
-            Vector3 angleComparePointX = new Vector3(
-                averageHandPosition.x, transform.position.y, averageHandPosition.z
-            );
-            float platformXAngle = Vector3.SignedAngle((angleComparePointX - transform.position), (averageHandPosition - transform.position), rigTransform.rotation * Vector3.right);
-            
-            // Y Position & Angle
-            Vector3 angleComparePointY = new Vector3(
-                averageHandPosition.x, transform.position.y, averageHandPosition.z
-            );
-
-            Vector3 yDirection = (angleComparePointY - transform.position).normalized;
-            Vector3 globalForward = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
-            float platformYAngle = Vector3.SignedAngle(Vector3.forward, yDirection, Vector3.up);
-
-            // Z Position & Angle
-            float platformZAngle = (rightHandTransform.rotation.eulerAngles.z + leftHandTransform.rotation.eulerAngles.z) / 2f;
-            transform.rotation = Quaternion.Euler(platformXAngle, platformYAngle, platformZAngle);
-    }
-    private float platformMovementMultiplication()
+    private float PlatformMovementMultiplication()
     {
         Vector3 leftHandVelocity = leftHandTransform.gameObject.GetComponent<Hand>().GetHandVelocity();
         Vector3 rightHandVelocity = rightHandTransform.gameObject.GetComponent<Hand>().GetHandVelocity();
-    
-        Vector3 averageHandVelocity = (leftHandVelocity + rightHandVelocity) / 2f;
-        float platformMovementAngle = Vector3.Angle(Vector3.up, averageHandVelocity);
-        float platformSpeedClamp = Mathf.Max(1f, Mathf.Log(averageHandVelocity.magnitude, 2f));
-        float platformAdjustment = platformMovementAngle < 90f ? platformSpeedClamp : 1f / platformSpeedClamp;
 
-        return platformAdjustment;
+        return PlatformVectorUtils.CalculatePlaformMovementHitMultiplier(leftHandVelocity, rightHandVelocity);
     }
 
     private void DisableHandColliders()

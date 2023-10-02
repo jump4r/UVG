@@ -21,7 +21,11 @@ public class Ball : MonoBehaviour
     // Out Of Play Delegate
     public delegate void OutOfPlayAction();
     public static OutOfPlayAction OnOutOfPlay;
-    
+
+    // On Deflect Delegate
+    public delegate void OnDeflectAction(Ball volleyball);
+    public static event OnDeflectAction OnDeflect;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -48,11 +52,17 @@ public class Ball : MonoBehaviour
             toBeDestroyed = true;
             Invoke("DestroyAndRelaunch", 1f);
 
-            // Remove when we actually start serving
+            // Bots to move to serve recieve when ball is out of play
             if (launcher)
             {
-                OnOutOfPlay();
+                // OnOutOfPlay();
             }
+        }
+
+        if (col.gameObject.layer == 12)
+        {
+            CalculatePath();
+            OnDeflect(this);
         }
     }
 
@@ -83,7 +93,6 @@ public class Ball : MonoBehaviour
             float z = initialPoint.z + (velocity.z * t);
             float y = initialPoint.y + (velocity.y * t) + (g * Mathf.Pow(t, 2) / 2);
 
-            Vector3 newPoint = new Vector3(x, y, z);
             projectedPath[i] = new Vector3(x, y, z);
 
             if (i > 0 && projectedPath[i].y < 0 && projectedPath[i-1].y > 0)

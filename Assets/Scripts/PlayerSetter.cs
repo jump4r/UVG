@@ -51,6 +51,7 @@ public class PlayerSetter : MonoBehaviour
 
             volleyball = null;
             GetComponent<SphereCollider>().enabled = false;
+            Invoke("EnableHandColliders", 0.15f);
         }
     }
 
@@ -61,11 +62,11 @@ public class PlayerSetter : MonoBehaviour
         {
             transform.position = GetCenter();
             GetComponent<SphereCollider>().enabled = true;
+            DisableHandColliders();
 
             if (volleyball != null)
             {
                 volleyball.GetComponent<Rigidbody>().useGravity = false;
-
                 volleyball.transform.position = GetCenter();
             }
         }        
@@ -82,5 +83,17 @@ public class PlayerSetter : MonoBehaviour
     private Vector3 GetCenter()
     {
         return (leftHand.gameObject.transform.position + rightHand.gameObject.transform.position) / 2f;
+    }
+
+    private void DisableHandColliders()
+    {
+        rightHand.GetComponent<BoxCollider>().enabled = false;
+        leftHand.GetComponent<BoxCollider>().enabled = false;
+    }
+
+    private void EnableHandColliders()
+    {
+        rightHand.GetComponent<BoxCollider>().enabled = true;
+        leftHand.GetComponent<BoxCollider>().enabled = true;
     }
 }

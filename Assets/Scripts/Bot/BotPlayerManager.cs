@@ -18,7 +18,7 @@ public class BotPlayerManager : MonoBehaviour
 
     void Start()
     {
-        BallLauncher.OnLaunch += UpdatePlayersOnHit;
+        BallLauncher.OnServe += UpdatePlayersOnHit;
 
         // Listen for any hits from other bots or player
         BotPass.OnBallHit += UpdatePlayersOnHit;

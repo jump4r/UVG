@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class Hand : MonoBehaviour
 {
-    public float hitMultiplier = 3f;
+    public float hitMultiplier = 2f;
 
     [SerializeField]
     private XRNode handInputDevice;

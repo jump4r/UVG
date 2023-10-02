@@ -25,7 +25,7 @@ public class ContinuousMovement : MonoBehaviour
     private float fallingSpeed = 0;
     private float additionalHeight = 0.2f;
 
-    public float jumpVelocity = 1f;
+    public float jumpVelocity = 1.5f;
     private bool jumpButtonPressed = false;
     private bool jumpReady = true;
     private Vector3 verticalVelocity = Vector3.zero;
