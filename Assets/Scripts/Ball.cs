@@ -7,6 +7,7 @@ public class Ball : MonoBehaviour
     private Rigidbody rb;
     private float initialYVelocity = 0f;
     private Vector3 initialPos = Vector3.zero;
+    public Vector3 bouncePos { get; private set; } = Vector3.zero;
 
     public Vector3 velBeforePhysicsUpdate { get; private set;} = Vector3.zero;
     public Vector3 estimatedLandingPos { get; private set; } = Vector3.zero;
@@ -26,6 +27,10 @@ public class Ball : MonoBehaviour
     public delegate void OnDeflectAction(Ball volleyball);
     public static event OnDeflectAction OnDeflect;
 
+    // Last Touched By
+    public VolleyballPlayer lastTouchedBy;
+    public bool isLastTouchBlock = false;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -40,6 +45,7 @@ public class Ball : MonoBehaviour
     void FixedUpdate()
     {
         velBeforePhysicsUpdate = rb.velocity;
+
     }
 
     void OnCollisionEnter(Collision col)
@@ -50,17 +56,16 @@ public class Ball : MonoBehaviour
         )
         {
             toBeDestroyed = true;
-            Invoke("DestroyAndRelaunch", 1f);
-
+            bouncePos = transform.position;
+            // Invoke("DestroyAndRelaunch", 1f);
             // Bots to move to serve recieve when ball is out of play
-            if (launcher)
-            {
-                // OnOutOfPlay();
-            }
+            // Todo: Remove when serve is implemented
+            Invoke("DestroyObject", 1f);
         }
 
-        if (col.gameObject.layer == 12)
+        else if (col.gameObject.tag == "Net")
         {
+            rb.velocity = Vector3.Reflect(velBeforePhysicsUpdate, col.contacts[0].normal);
             CalculatePath();
             OnDeflect(this);
         }
@@ -72,6 +77,12 @@ public class Ball : MonoBehaviour
         Destroy(this.gameObject);
     }
 
+    void DestroyObject()
+    {
+        OnOutOfPlay();
+        Destroy(gameObject);
+    }
+
 
     public void SetVelocity(Vector3 newVel)
     {
@@ -80,12 +91,21 @@ public class Ball : MonoBehaviour
         initialPos = transform.position;
     }
 
+    public void SetLastTouchedBy(VolleyballPlayer player)
+    {
+        if (!toBeDestroyed)
+        {
+            lastTouchedBy = player;
+        }
+    }
+
     public void CalculatePath()
     {
         float g = Physics.gravity.y;
         Vector3 velocity = rb.velocity;
         Vector3 initialPoint = transform.position;
 
+        // There's a better approach for this...
         for(int i = 0; i < projectedPath.Length; i++)
         {
             float t = i * (Time.fixedDeltaTime * 5);
@@ -101,6 +121,7 @@ public class Ball : MonoBehaviour
             }
         }
 
+        // Debug Line for ball trajectory.
         for (int i = 0; i < projectedPath.Length - 1; i++) {
             Debug.DrawLine(projectedPath[i], projectedPath[i+1], Color.red, 3f);
         }

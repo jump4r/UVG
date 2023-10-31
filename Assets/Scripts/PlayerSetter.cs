@@ -41,6 +41,7 @@ public class PlayerSetter : MonoBehaviour
             
             volleyball.SetVelocity(newBallVel);
             volleyball.CalculatePath();
+            volleyball.SetLastTouchedBy(vp);
 
             // Update Game State
             VolleyballGameManager.instance.HandleInteraction(vp);

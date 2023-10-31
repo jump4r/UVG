@@ -6,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public static class PlayerConstants
 {
-    public const float MOVE_SPEED = 2f;
+    public const float MOVE_SPEED = 3f;
     public const float AIR_SPEED = 0.75f;
 }
 
@@ -34,7 +34,6 @@ public class ContinuousMovement : MonoBehaviour
     {
         character = GetComponent<CharacterController>();   
         rig = GetComponent<XRRig>();
-        Debug.Log("Game Object: " + gameObject);
     }
 
     // Update is called once per frame

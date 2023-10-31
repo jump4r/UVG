@@ -43,6 +43,12 @@ public class BotPassTargets : MonoBehaviour
     // Check & see if bots are ready to hit, and choose a random bot to set if they are.
     public Vector3 GetSetTargetFromAvailablePlayers()
     {
+        // Todo: Remove after debugging
+        if (setTargets.Count == 1)
+        {
+            return setTargets[Role.OUTSIDE];
+        }
+
         // For now just get a random one
         Role randomRole = hittingRoles[Random.Range(0, hittingRoles.Length)];
 
@@ -52,7 +58,7 @@ public class BotPassTargets : MonoBehaviour
 
     public Vector3 GetHitTarget()
     {
-        return hitTargets[0];
-        // return hitTargets[Random.Range(0, hitTargets.Count)];
+        // return hitTargets[0];
+        return hitTargets[Random.Range(0, hitTargets.Count)];
     }
 }

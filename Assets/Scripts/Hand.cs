@@ -42,6 +42,7 @@ public class Hand : MonoBehaviour
             
             volleyball.SetVelocity(newBallVelocity * -1f);
             volleyball.CalculatePath();
+            volleyball.SetLastTouchedBy(vp);
 
             // Update Game State
             VolleyballGameManager.instance.HandleInteraction(vp);

@@ -6,6 +6,7 @@ public class BotDestinations : MonoBehaviour
 {
     public Dictionary<Role, Vector3> setPositions = new Dictionary<Role, Vector3>();
     public Dictionary<Role, Vector3> serveRecievePositions = new Dictionary<Role, Vector3>();
+    private Vector3 serverPosition;
 
     void Start()
     {
@@ -22,6 +23,10 @@ public class BotDestinations : MonoBehaviour
                 case TargetType.Set:
                     setPositions.Add(target.role, target.transform.position);
                     break;
+
+                case TargetType.Serve:
+                    serverPosition = target.transform.position;
+                    break;
                 
                 default:
                     break;
@@ -32,6 +37,11 @@ public class BotDestinations : MonoBehaviour
     public Vector3 GetServeReceivePosition(Role role)
     {
         return serveRecievePositions[role];
+    }
+
+    public Vector3 GetServerPosition()
+    {
+        return serverPosition;
     }
 
 }

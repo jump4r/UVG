@@ -12,6 +12,7 @@ TagManager:
   - Ground
   - BlueTeamManager
   - RedTeamManager
+  - Net
   layers:
   - Default
   - TransparentFX

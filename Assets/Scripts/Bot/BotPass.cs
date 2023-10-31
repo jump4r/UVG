@@ -1,11 +1,10 @@
- using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+public enum BotPassState { None, Pass, Block };
 public class BotPass : MonoBehaviour
 {
     private BotPlayer botPlayer;
-    private bool readyToPass = true;
+    private BotPassState passState = BotPassState.Pass;
     private const float PASS_TIMEOUT = 0.1f;
     [SerializeField]
     private Vector3 passTarget;
@@ -28,18 +27,29 @@ public class BotPass : MonoBehaviour
     {
         if (col.gameObject.tag == "Ball")
         {
-            if (readyToPass)
+            Ball volleyball = col.gameObject.GetComponent<Ball>();
+            if (passState == BotPassState.Pass)
             {
-                PassBall(col.gameObject.GetComponent<Ball>());
-                readyToPass = false;
+                PassBall(volleyball);
+                passState = BotPassState.None;
                 Invoke("SetReadyToPass", PASS_TIMEOUT);
+            }
+
+            else if (passState == BotPassState.Block)
+            {
+                BlockBall(volleyball, col.contacts[0].normal);
             }
         }
     }
 
+    public void UpdatePassState(BotPassState state)
+    {
+        passState = state;
+    }
+
     void SetReadyToPass()
     {
-        readyToPass = true;
+        passState = BotPassState.Pass;
     }
 
     private Vector3 GetInitialHitVelocity(Ball volleyball)
@@ -108,6 +118,8 @@ public class BotPass : MonoBehaviour
 
         Vector3 initialVelocity = GetInitialHitVelocity(volleyball);
 
+        volleyball.SetLastTouchedBy(botPlayer);
+        volleyball.isLastTouchBlock = false;
         volleyball.SetVelocity(initialVelocity);
         volleyball.CalculatePath();
 
@@ -115,6 +127,23 @@ public class BotPass : MonoBehaviour
         VolleyballGameManager.instance.IncrementHitAmount();
 
         // Call any listeners to OnPass()
+        OnBallHit(volleyball);
+    }
+    
+    private void BlockBall(Ball volleyball, Vector3 reflectNormal)
+    {
+        Debug.Log("Bot attmepting to block: " + name);
+        // Handle initial, Change possesion & add to hit count if needed
+        VolleyballGameManager.instance.HandleInteraction(GetComponent<BotPlayer>());
+
+        volleyball.SetLastTouchedBy(botPlayer);
+        volleyball.isLastTouchBlock = true;
+        volleyball.SetVelocity(Vector3.Reflect(volleyball.velBeforePhysicsUpdate * 0.75f, reflectNormal));
+        volleyball.CalculatePath();
+
+        // Regardless of where the ball lands, the hit counter gets reset due to a block;
+        VolleyballGameManager.instance.ResetHitAmount();
+
         OnBallHit(volleyball);
     }
 

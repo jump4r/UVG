@@ -10,8 +10,7 @@ public class BotMove : MonoBehaviour
     // Movement
     [SerializeField]
     private float moveSpeed;
-    private Vector3 destinationPoint;
-    private Rigidbody rb;
+    public Vector3 destinationPoint;
     private CharacterController controller;
 
     // Gravity
@@ -37,14 +36,20 @@ public class BotMove : MonoBehaviour
         botPlayer = GetComponent<BotPlayer>();
         botHeight = GetComponent<CharacterController>().height;
         botRadius = GetComponent<CharacterController>().radius;
-        rb = GetComponent<Rigidbody>();
         controller = GetComponent<CharacterController>();
         maxJumpHeight = GetMaxJumpHeight();
         timeToMaxJumpHeight = GetTimeToMaxJumpHeight();
 
         destinations = GameObject.FindGameObjectWithTag(botPlayer.managerTag).GetComponentInChildren<BotDestinations>();
-        
-        Ball.OnOutOfPlay += MoveToServeRecieve;
+
+        StartCoroutine(LateStart(1f));
+    }
+
+    IEnumerator LateStart(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        Ball.OnOutOfPlay += MoveToInitialPosition;
+        Debug.Log("Late Start Called");
     }
     
     private float GetMaxJumpHeight()
@@ -61,11 +66,24 @@ public class BotMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (destinationPoint != Vector3.zero && !ArrivedAtDestination())
+        if (destinationPoint != Vector3.zero)
         {
             Vector3 movementVector = (destinationPoint - transform.position);
             Vector3 normalizedDirection = new Vector3(movementVector.x, 0, movementVector.z).normalized;
-            controller.Move(normalizedDirection * Time.fixedDeltaTime * moveSpeed);
+
+            if (!ArrivedAtDestination())
+            {
+                controller.Move(normalizedDirection * Time.fixedDeltaTime * moveSpeed);
+                if (gameObject.name == "Bot Player (1)" || gameObject.name == "Blue Team Server")
+                {
+                    Debug.DrawLine(destinationPoint, transform.position, Color.white);
+                }
+            }
+
+            else if (IsGrounded())
+            {
+                transform.position = destinationPoint;
+            }
         }
 
         // -- Vertical Movements --
@@ -77,7 +95,7 @@ public class BotMove : MonoBehaviour
         {
             Ball currentBall = VolleyballGameManager.instance.currentBall;
 
-            if (Vector3.Distance(currentBall.transform.position, jumpPoint) < 0.1f)
+            if (currentBall != null && Vector3.Distance(currentBall.transform.position, jumpPoint) < 0.1f)
             {
                 Jump();
                 jumpPoint = Vector3.zero;
@@ -100,7 +118,7 @@ public class BotMove : MonoBehaviour
             return;
         }
 
-        if (CheckIfGrounded())
+        if (IsGrounded())
         {
             fallingSpeed = 0;
             verticalVelocity = Vector3.zero;
@@ -117,7 +135,7 @@ public class BotMove : MonoBehaviour
 
     void Jump()
     {
-        if (!CheckIfGrounded())
+        if (!IsGrounded())
         {
             return;
         }
@@ -125,9 +143,10 @@ public class BotMove : MonoBehaviour
         verticalVelocity = Vector3.up * jumpForce;
     }
 
-    public void CalculateAndMoveToDestinationPoint(Ball volleyball, int currentHit)
+    public void CalculateAndMoveToDestinationPoint(Ball volleyball)
     {
         Team landingTeam = VolleyballGameManager.instance.FindTeamLandingZone();
+        int currentHit = VolleyballGameManager.instance.amountOfHits;
 
         if (landingTeam != botPlayer.team)
         {
@@ -142,7 +161,8 @@ public class BotMove : MonoBehaviour
         }
 
         else {
-            destinationPoint = volleyball.FindNearestYPointOnPath(transform.position.y);
+            destinationPoint = volleyball.FindNearestYPointOnPath(botHeight / 2);
+            destinationPoint.y = botHeight / 2;
         }
     }
 
@@ -152,32 +172,40 @@ public class BotMove : MonoBehaviour
         destinationPoint.y = botHeight / 2f;
     }
 
-    public void MoveToServeRecieve()
+    public void MoveToBlockPoint(Ball volleyball)
     {
-        destinationPoint = destinations.GetServeReceivePosition(botPlayer.role);
+        Vector3 oppSpikePoint = volleyball.FindNearestYPointOnPath(maxJumpHeight + botHeight / 2);
+        Vector3 netPosition = GameObject.FindGameObjectWithTag("Net").transform.position;
+
+        float updatedZPos = oppSpikePoint.z < 0 ? 0.5f : -0.5f;
+        float updatedXPos = oppSpikePoint.x;
+
+        destinationPoint = new Vector3(updatedXPos, oppSpikePoint.y, updatedZPos);
+        jumpPoint = volleyball.GetJumpPoint(destinationPoint, timeToMaxJumpHeight);
+
+        Debug.DrawLine(transform.position, destinationPoint, Color.green, 5f);
+    }
+
+    public void MoveToInitialPosition()
+    {
+        destinationPoint = ServerManager.instance.currentServer == botPlayer ?
+            destinations.GetServerPosition() :
+            destinations.GetServeReceivePosition(botPlayer.role);
+
         destinationPoint.y = botHeight / 2f;
     }
 
-    bool CheckIfGrounded()
+    bool IsGrounded()
     {
         float rayLength = (controller.height / 2f) - controller.radius + 0.01f;
-        bool hasHit = Physics.SphereCast(transform.position, botRadius, Vector3.down, out RaycastHit hitInfo, rayLength, groundLayer);
-        return hasHit;
+        return Physics.SphereCast(transform.position, botRadius, Vector3.down, out RaycastHit hitInfo, rayLength, groundLayer);
     }
 
-    private bool ArrivedAtDestination()
+    public bool ArrivedAtDestination()
     {
-        float distanceFromDestination = Vector3.Distance(transform.position, destinationPoint);
-
-        if (gameObject.name == "Bot Player (1)")
-        {
-            Debug.Log("Distance from Destination: " + distanceFromDestination);
-        }
-        
-        if (Vector3.Distance(transform.position, destinationPoint) < 0.5f)
+        if (Vector3.Distance(transform.position, destinationPoint) < .3f)
         {
             transform.position = destinationPoint;
-            destinationPoint = Vector3.zero;
             return true;
         }
         

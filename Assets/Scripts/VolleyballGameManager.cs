@@ -52,7 +52,8 @@ public class VolleyballGameManager : MonoBehaviour
         return false;
     }
 
-    public void IncrementHitAmount() { amountOfHits++; Debug.Log("Current Hit: " + amountOfHits); }
+    public void IncrementHitAmount() { amountOfHits++; }
+    public void ResetHitAmount() { amountOfHits = 0; }
 
     public Team FindTeamLandingZone()
     {

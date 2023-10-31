@@ -53,10 +53,11 @@ public class ServeBall : XRGrabInteractable
     void TransitionToRegularBall()
     {
         GameObject b = Instantiate(Ball, transform.position, transform.rotation);
+
+        Destroy(gameObject);
+
         b.GetComponent<Rigidbody>().velocity = rb.velocity;
-        
         Ball volleyball = b.GetComponent<Ball>();
         ServerManager.instance.InitializeServeBall(volleyball);
-        Destroy(gameObject);
     }
 }

@@ -10,7 +10,7 @@ public class BotPlayerManager : MonoBehaviour
     [SerializeField]
     private string managerTag;
     [SerializeField]
-    private List<BotPlayer> players = new List<BotPlayer>();
+    private List<VolleyballPlayer> players = new List<VolleyballPlayer>();
     private string lastTouch;
     private BotPassTargets passTargets;
     private BotDestinations destinations;
@@ -25,6 +25,7 @@ public class BotPlayerManager : MonoBehaviour
         PassPlatform.OnBallHit += UpdatePlayersOnHit;
         Hand.OnBallHit += UpdatePlayersOnHit;
         PlayerSetter.OnBallSet += UpdatePlayersOnHit;
+        Ball.OnDeflect += UpdatePlayersOnHit;
 
         passTargets = GameObject.FindGameObjectWithTag(managerTag).GetComponentInChildren<BotPassTargets>();
         destinations = GameObject.FindGameObjectWithTag(managerTag).GetComponentInChildren<BotDestinations>();
@@ -41,47 +42,91 @@ public class BotPlayerManager : MonoBehaviour
         Team landingZoneTeam = VolleyballGameManager.instance.FindTeamLandingZone();
 
         float shortestDistance = Int64.MaxValue;
-        BotPlayer playerToReceive = null;
+        VolleyballPlayer playerToReceive = null;
+        VolleyballPlayer playerToBlock = null;
 
+        // Manage Players on other side of the net.
         if (team != landingZoneTeam)
         {
-            foreach (BotPlayer p in players)
+            playerToBlock = GetClosestPlayer(ball);
+            foreach (VolleyballPlayer p in players)
             {
-                MoveToRecieve(p);
+                if (p is BotPlayer)
+                {
+                    if (VolleyballGameManager.instance.amountOfHits == 2 && p.name == playerToBlock.name)
+                    {
+                        MoveToBlock(p as BotPlayer);
+                    }
+
+                    else
+                    {
+                        MoveToRecieve(p as BotPlayer);
+                    }
+                }
             }
 
             return;
         }
-        
-        // Find closest player to recieve ball
-        foreach (BotPlayer p in players)
-        {
-            float distance = Vector3.Distance(p.transform.position, ball.estimatedLandingPos);
 
-            if (distance < shortestDistance)
-            {
-                shortestDistance = distance;
-                playerToReceive = p;
-            }
+        // Find closest player to recieve ball
+        playerToReceive = GetClosestPlayer(ball);
+
+        if (ball.isLastTouchBlock)
+        {
+            Debug.Log("This is off of a block. Info: " + playerToReceive.name);
         }
 
         // Move other players to appropriate positions
-        foreach (BotPlayer p in players)
+        foreach (VolleyballPlayer p in players)
         {
-            if (p.name != playerToReceive.name)
+            if (p is BotPlayer)
             {
-                MoveToNextPosition(p);
-            }
+                if (p.name != playerToReceive.name)
+                {
+                    MoveToNextPosition(p as BotPlayer);
+                }
 
-            else
-            {
-                playerToReceive.BotMove.CalculateAndMoveToDestinationPoint(ball, VolleyballGameManager.instance.amountOfHits);
+                else
+                {
+                    (p as BotPlayer).BotMove.CalculateAndMoveToDestinationPoint(ball);
+                }
             }
         }
     }
 
+    private VolleyballPlayer GetClosestPlayer(Ball volleyball)
+    {
+        float shortestDistance = Int64.MaxValue;
+        VolleyballPlayer closestPlayer = null;
+
+        foreach (VolleyballPlayer p in players)
+        {
+            if (p == volleyball.lastTouchedBy && !volleyball.isLastTouchBlock)
+            {
+                continue;
+            }
+
+            float distance = Vector3.Distance(p.transform.position, volleyball.estimatedLandingPos);
+
+            if (distance < shortestDistance)
+            {
+                shortestDistance = distance;
+                closestPlayer = p;
+            }
+        }
+
+        return closestPlayer;
+    }
+
+    private void MoveToBlock(BotPlayer player)
+    {
+        player.BotPass.UpdatePassState(BotPassState.Pass);
+        player.BotMove.MoveToBlockPoint(VolleyballGameManager.instance.currentBall);
+    }
+
     private void MoveToRecieve(BotPlayer player)
     {
+        player.BotPass.UpdatePassState(BotPassState.Pass);
         player.BotMove.MoveToTarget(destinations.serveRecievePositions[player.role]);
     }
 
@@ -102,7 +147,7 @@ public class BotPlayerManager : MonoBehaviour
 
                 catch
                 {
-                    Debug.Log("We probably dont have a player role set for this position");
+                    // Debug.Log("We probably dont have a player role set for this position");
                 }
                
                 break;

@@ -28,6 +28,7 @@ public class PassPlatform : MonoBehaviour
     {
        platform = GetComponent<BoxCollider>();
        vp = GameObject.FindGameObjectWithTag("Player").GetComponent<VolleyballPlayer>();
+
        HandGestures.OnGestureChanged += OnGestureChanged;
     }
 
@@ -45,8 +46,7 @@ public class PassPlatform : MonoBehaviour
 
             volleyball.SetVelocity(newBallVelocity);
             volleyball.CalculatePath();
-
-            Debug.Log("Ball passed by player, call it up");
+            volleyball.SetLastTouchedBy(vp);
 
             // Update Game State
             VolleyballGameManager.instance.HandleInteraction(vp);
